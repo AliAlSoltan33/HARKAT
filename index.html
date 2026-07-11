@@ -8,11 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#FAF6EF;
+    --bg:#F7F3EA;
     --paper:#FFFFFF;
-    --ink:#23262B;
-    --ink-soft:#6B6F76;
-    --line:#E6DFD0;
+    --ink:#292A2E;
+    --ink-soft:#767A81;
+    --line:#E4DCC8;
     --navy:#1E2A38;
     --navy-soft:#2E3F52;
     --orange:#E08A2C;
@@ -22,200 +22,173 @@
     --green-tint:#E7F1E9;
     --red:#C0503D;
     --red-tint:#F7E9E6;
-    --shadow: 0 10px 30px rgba(30,42,56,.09);
+    --shadow: 0 10px 30px rgba(30,42,56,.08);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Tajawal', sans-serif;
-    min-height:100vh;
-  }
+  body{ background:var(--bg); color:var(--ink); font-family:'Tajawal', sans-serif; min-height:100vh; }
   .num{ font-family:'Courier New', monospace; direction:ltr; unicode-bidi:isolate; }
 
   /* ---------- Gate ---------- */
   #gate{
     min-height:100vh; display:flex; align-items:center; justify-content:center;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(224,138,44,.10), transparent 40%),
-      radial-gradient(circle at 80% 80%, rgba(30,42,56,.06), transparent 40%),
-      var(--bg);
+    background: radial-gradient(circle at 20% 20%, rgba(224,138,44,.10), transparent 40%), var(--bg);
   }
   .gate-card{
-    background:var(--paper); border:1px solid var(--line); border-radius:18px;
-    padding:40px 34px; width:340px; box-shadow:var(--shadow); text-align:center;
-    position:relative; overflow:hidden;
+    background:var(--paper); border:1px solid var(--line); border-radius:16px;
+    padding:40px 34px; width:320px; box-shadow:var(--shadow); text-align:center; position:relative; overflow:hidden;
   }
-  .gate-card::before{
-    content:""; position:absolute; top:0; right:0; width:56px; height:56px;
-    background:var(--orange); border-radius:0 0 0 18px;
-  }
-  .gate-logo{ font-weight:800; font-size:26px; color:var(--navy); letter-spacing:.5px;}
-  .gate-sub{ color:var(--ink-soft); font-size:13px; margin-top:4px; margin-bottom:24px;}
+  .gate-card::before{ content:""; position:absolute; top:0; right:0; width:50px; height:50px; background:var(--orange); border-radius:0 0 0 16px; }
+  .gate-logo{ font-weight:800; font-size:24px; color:var(--navy); }
+  .gate-sub{ color:var(--ink-soft); font-size:12.5px; margin:4px 0 22px; }
   #gate input{
-    width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line);
-    background:var(--bg); font-family:inherit; font-size:15px; text-align:center;
-    outline:none; transition:.2s;
+    width:100%; padding:12px 14px; border-radius:9px; border:1px solid var(--line);
+    background:var(--bg); font-family:inherit; font-size:14.5px; text-align:center; outline:none;
   }
   #gate input:focus{ border-color:var(--orange); background:#fff; }
   #gate button{
-    width:100%; margin-top:14px; padding:13px; border:none; border-radius:10px;
-    background:var(--navy); color:#fff; font-family:inherit; font-weight:700; font-size:15px;
-    cursor:pointer; transition:.2s;
+    width:100%; margin-top:13px; padding:12px; border:none; border-radius:9px;
+    background:var(--navy); color:#fff; font-family:inherit; font-weight:700; font-size:14.5px; cursor:pointer;
   }
   #gate button:hover{ background:var(--navy-soft); }
-  #gate-error{ color:var(--red); font-size:13px; margin-top:12px; height:16px; }
+  #gate-error{ color:var(--red); font-size:12.5px; margin-top:10px; min-height:16px; }
 
-  /* ---------- App shell ---------- */
+  /* ---------- App ---------- */
   #app{ display:none; }
-  header.topbar{
-    background:var(--navy); color:#fff; padding:18px 22px;
-    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
-    box-shadow:var(--shadow);
-  }
-  .brand{ display:flex; align-items:center; gap:12px; }
-  .brand-mark{
-    width:38px; height:38px; border-radius:9px; background:var(--orange);
-    display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--navy); font-size:18px;
-  }
-  .brand-text b{ display:block; font-size:19px; font-weight:800; }
-  .brand-text span{ display:block; font-size:11.5px; color:#B9C2CC; letter-spacing:.5px; }
+  .wrap{ max-width:760px; margin:0 auto; padding:26px 16px 70px; }
 
-  .tabs{ display:flex; gap:8px; }
-  .tab-btn{
-    padding:9px 18px; border-radius:9px; border:1px solid rgba(255,255,255,.18);
-    background:transparent; color:#DDE3E9; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer;
-    transition:.2s;
+  .sheet{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow); overflow:hidden;
   }
-  .tab-btn.active{ background:var(--orange); border-color:var(--orange); color:#fff; }
-  .tab-btn:not(.active):hover{ background:rgba(255,255,255,.08); }
-
-  main{ max-width:1000px; margin:26px auto; padding:0 18px 60px; }
-  .view{ display:none; }
-  .view.active{ display:block; }
-
-  .card{
-    background:var(--paper); border:1px solid var(--line); border-radius:16px;
-    padding:26px; box-shadow:var(--shadow); margin-bottom:20px; position:relative; overflow:hidden;
+  .letterhead{
+    background:var(--navy); color:#fff; padding:24px 26px; position:relative;
   }
-  .card::before{
-    content:""; position:absolute; top:0; right:0; width:10px; height:100%; background:var(--orange);
-  }
-  .card-inner{ padding-right:8px; }
+  .letterhead::after{ content:""; position:absolute; bottom:0; right:0; left:0; height:5px; background:var(--orange); }
+  .lh-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+  .lh-name{ font-size:24px; font-weight:800; }
+  .lh-tag{ font-size:12px; color:#B9C2CC; margin-top:2px; }
+  .lh-no{ text-align:left; font-size:12.5px; color:#B9C2CC; }
+  .lh-no b{ color:#fff; font-family:'Courier New', monospace; }
+  .lh-desc{ margin-top:14px; font-size:12.5px; line-height:1.9; color:#D8DEE4; max-width:520px; }
+  .lh-contact{ margin-top:12px; font-size:12px; color:#B9C2CC; }
 
-  .section-title{
-    display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; color:var(--navy);
-    margin-bottom:18px;
+  .meta{ padding:22px 26px 6px; }
+  .meta-row{ display:grid; grid-template-columns:110px 1fr; align-items:center; gap:10px; margin-bottom:12px; }
+  .meta-row label{ font-size:13px; color:var(--ink-soft); font-weight:700; }
+  .meta-row input{
+    padding:9px 12px; border-radius:8px; border:1px solid var(--line); background:var(--bg);
+    font-family:inherit; font-size:14px; outline:none;
   }
-  .section-title .chip{
-    background:var(--orange-tint); color:var(--orange-dark); font-size:11.5px; font-weight:700;
-    padding:3px 10px; border-radius:20px;
-  }
+  .meta-row input:focus{ border-color:var(--orange); background:#fff; }
+  @media (max-width:520px){ .meta-row{ grid-template-columns:1fr; } }
 
-  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-  @media (max-width:640px){ .grid2, .grid3{ grid-template-columns:1fr; } }
-
-  label{ display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; font-weight:500; }
-  input[type=text], input[type=date], input[type=tel], input[type=number]{
-    width:100%; padding:11px 12px; border-radius:9px; border:1px solid var(--line);
-    background:var(--bg); font-family:inherit; font-size:14.5px; color:var(--ink); outline:none; transition:.2s;
-  }
-  input:focus{ border-color:var(--orange); background:#fff; }
-  .field{ margin-bottom:14px; }
-
+  .items-wrap{ padding:10px 26px 0; }
   table.items{ width:100%; border-collapse:collapse; margin-top:6px; }
-  table.items th{
-    background:var(--navy); color:#fff; font-size:13px; font-weight:700; padding:11px 8px; text-align:center;
+  table.items thead th{
+    background:var(--bg); border-bottom:2px solid var(--line); padding:10px 6px; text-align:center;
+    font-size:12px; font-weight:800; color:var(--navy);
   }
-  table.items th:first-child{ border-radius:9px 0 0 0; }
-  table.items th:last-child{ border-radius:0 9px 0 0; }
-  table.items td{ padding:8px 6px; border-bottom:1px solid var(--line); text-align:center; }
-  table.items td input{ text-align:center; padding:9px 6px; }
-  table.items tr:hover td{ background:#FCFAF5; }
+  table.items thead th small{ display:block; font-weight:400; color:var(--ink-soft); font-size:10.5px; }
+  table.items td{ padding:7px 5px; border-bottom:1px solid var(--line); text-align:center; }
+  table.items td input{
+    width:100%; padding:8px 6px; border-radius:7px; border:1px solid var(--line); background:var(--bg);
+    font-family:inherit; font-size:13.5px; text-align:center; outline:none;
+  }
+  table.items td input:focus{ border-color:var(--orange); background:#fff; }
   .row-total{ font-weight:700; color:var(--navy); }
-  .del-row{
-    background:var(--red-tint); color:var(--red); border:none; width:30px; height:30px; border-radius:8px;
-    cursor:pointer; font-size:15px; font-weight:700; line-height:1;
-  }
-  .del-row:hover{ opacity:.8; }
+  .del-row{ background:var(--red-tint); color:var(--red); border:none; width:28px; height:28px; border-radius:7px; cursor:pointer; font-weight:700; }
   .add-row-btn{
-    margin-top:12px; background:var(--green-tint); color:var(--green); border:1px dashed var(--green);
-    padding:9px 16px; border-radius:9px; cursor:pointer; font-family:inherit; font-weight:700; font-size:13.5px;
+    margin:12px 0 4px; background:var(--green-tint); color:var(--green); border:1px dashed var(--green);
+    padding:8px 16px; border-radius:8px; cursor:pointer; font-family:inherit; font-weight:700; font-size:13px;
   }
-  .add-row-btn:hover{ opacity:.85; }
 
-  .totals{ margin-top:20px; display:flex; justify-content:flex-end; }
-  .totals-box{ width:280px; }
-  .totals-row{
-    display:flex; justify-content:space-between; align-items:center; padding:9px 4px; font-size:14px;
+  .totals{ padding:12px 26px 0; display:flex; justify-content:flex-end; }
+  .totals-box{ width:260px; }
+  .t-row{ display:flex; justify-content:space-between; padding:6px 2px; font-size:13.5px; color:var(--ink-soft); }
+  .t-row input{ width:110px; padding:6px 8px; border-radius:7px; border:1px solid var(--line); background:var(--bg); text-align:center; font-family:'Courier New',monospace; }
+  .t-grand{
+    background:var(--navy); color:#fff; border-radius:9px; padding:12px 14px; font-weight:800; font-size:15px;
+    display:flex; justify-content:space-between; margin-top:8px;
   }
-  .totals-row.grand{
-    background:var(--navy); color:#fff; border-radius:10px; padding:14px 16px; font-weight:800; font-size:16px; margin-top:6px;
-  }
-  .totals-row.grand .num{ color:var(--orange); font-size:18px; }
+  .t-grand .num{ color:var(--orange); font-size:17px; }
 
-  .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .footnote{ padding:18px 26px 0; text-align:center; font-size:12px; color:var(--ink-soft); font-style:italic; }
+  .signature{ padding:20px 26px 4px; display:flex; justify-content:flex-end; font-size:13.5px; color:var(--ink-soft); }
+  .signature b{ color:var(--ink); margin-left:6px; }
+
+  .actions{ padding:20px 26px 26px; display:flex; flex-wrap:wrap; gap:9px; border-top:1px dashed var(--line); margin-top:16px; }
   .btn{
-    padding:12px 18px; border-radius:10px; border:none; font-family:inherit; font-weight:700; font-size:14px;
-    cursor:pointer; transition:.2s; display:flex; align-items:center; gap:8px;
+    padding:11px 16px; border-radius:9px; border:none; font-family:inherit; font-weight:700; font-size:13.5px;
+    cursor:pointer; transition:.15s; display:flex; align-items:center; gap:6px;
   }
   .btn:hover{ transform:translateY(-1px); }
-  .btn:active{ transform:translateY(0); }
   .btn-primary{ background:var(--orange); color:#fff; }
   .btn-primary:hover{ background:var(--orange-dark); }
   .btn-outline{ background:#fff; color:var(--navy); border:1px solid var(--line); }
   .btn-outline:hover{ background:var(--bg); }
   .btn-danger{ background:var(--red-tint); color:var(--red); }
-  .btn-danger:hover{ background:#f2d9d3; }
   .btn-ghost{ background:var(--navy); color:#fff; }
   .btn-ghost:hover{ background:var(--navy-soft); }
 
+  /* ---------- All receipts panel ---------- */
+  #panelOverlay{
+    display:none; position:fixed; inset:0; background:rgba(30,42,56,.45); z-index:80;
+    align-items:flex-start; justify-content:center; padding:30px 14px; overflow-y:auto;
+  }
+  #panelOverlay.show{ display:flex; }
+  .panel{
+    background:var(--paper); border-radius:14px; width:100%; max-width:820px; box-shadow:var(--shadow);
+    max-height:88vh; display:flex; flex-direction:column; overflow:hidden;
+  }
+  .panel-head{
+    background:var(--navy); color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center;
+  }
+  .panel-head b{ font-size:15.5px; }
+  .panel-head .chip{ background:var(--orange); border-radius:20px; padding:2px 10px; font-size:11.5px; margin-right:8px; }
+  .panel-close{ background:rgba(255,255,255,.12); border:none; color:#fff; width:30px; height:30px; border-radius:8px; cursor:pointer; font-size:15px; }
+  .panel-body{ padding:18px 22px; overflow-y:auto; }
+  .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .search-wrap{ position:relative; flex:1; min-width:200px; }
+  .search-wrap input{ width:100%; padding:10px 34px 10px 12px; border-radius:8px; border:1px solid var(--line); background:var(--bg); font-family:inherit; font-size:13.5px; outline:none; }
+  .search-wrap input:focus{ border-color:var(--orange); background:#fff; }
+  .search-wrap .icon{ position:absolute; right:11px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:14px; }
+
+  table.list{ width:100%; border-collapse:collapse; }
+  table.list th{ background:var(--bg); color:var(--navy); font-size:11.5px; font-weight:800; padding:9px 6px; border-bottom:2px solid var(--line); text-align:center; }
+  table.list td{ padding:9px 6px; border-bottom:1px solid var(--line); text-align:center; font-size:13px; }
+  .mini-btn{ border:none; border-radius:7px; padding:6px 10px; font-family:inherit; font-weight:700; font-size:11.5px; cursor:pointer; margin:0 2px; }
+  .mini-print{ background:var(--orange-tint); color:var(--orange-dark); }
+  .mini-del{ background:var(--red-tint); color:var(--red); }
+  .empty-state{ text-align:center; padding:40px 10px; color:var(--ink-soft); font-size:13.5px; }
+  .empty-state .big{ font-size:34px; margin-bottom:8px; }
+
   .toast{
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
-    background:var(--navy); color:#fff; padding:13px 22px; border-radius:11px; font-size:14px; font-weight:600;
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy); color:#fff; padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:600;
     box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.25s; z-index:999;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
   .toast.success{ background:var(--green); }
   .toast.error{ background:var(--red); }
 
-  .toolbar{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
-  .search-wrap{ position:relative; flex:1; min-width:220px; }
-  .search-wrap input{ padding-right:38px; }
-  .search-wrap .icon{ position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:15px; }
-
-  table.list{ width:100%; border-collapse:collapse; }
-  table.list th{
-    background:var(--bg); color:var(--navy); font-size:12.5px; font-weight:800; padding:11px 8px;
-    border-bottom:2px solid var(--line); text-align:center;
-  }
-  table.list td{ padding:11px 8px; border-bottom:1px solid var(--line); text-align:center; font-size:13.5px; }
-  table.list tr:hover td{ background:#FCFAF5; }
-  .mini-btn{
-    border:none; border-radius:7px; padding:7px 11px; font-family:inherit; font-weight:700; font-size:12px; cursor:pointer; margin:0 3px;
-  }
-  .mini-print{ background:var(--orange-tint); color:var(--orange-dark); }
-  .mini-del{ background:var(--red-tint); color:var(--red); }
-  .empty-state{ text-align:center; padding:50px 10px; color:var(--ink-soft); }
-  .empty-state .big{ font-size:38px; margin-bottom:10px; }
-
   /* ---------- Print ---------- */
   #printArea{ display:none; }
   @media print{
     body *{ visibility:hidden; }
     #printArea, #printArea *{ visibility:visible; }
-    #printArea{ display:block; position:absolute; top:0; right:0; left:0; padding:20px; }
-    .p-head{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #E08A2C; padding-bottom:14px; }
-    .p-brand b{ font-size:22px; } .p-brand span{ font-size:11px; color:#666; display:block; }
-    .p-tag{ background:#E08A2C; color:#fff; padding:6px 16px; border-radius:6px; font-weight:800; }
-    .p-meta{ display:flex; justify-content:space-between; margin:16px 0; font-size:13px; }
+    #printArea{ display:block; position:absolute; top:0; right:0; left:0; padding:22px; }
+    .p-head{ border-bottom:3px solid #E08A2C; padding-bottom:12px; }
+    .p-head b{ font-size:20px; } .p-head span{ font-size:11px; color:#666; display:block; }
+    .p-desc{ font-size:11px; color:#555; margin-top:6px; }
+    .p-meta{ display:flex; justify-content:space-between; margin:14px 0; font-size:12.5px; }
     .p-meta div{ line-height:1.9; }
-    table.p-items{ width:100%; border-collapse:collapse; margin-top:10px; }
-    table.p-items th{ background:#1E2A38; color:#fff; padding:8px; font-size:12.5px; }
-    table.p-items td{ padding:8px; border-bottom:1px solid #ddd; text-align:center; font-size:12.5px; }
-    .p-grand{ margin-top:16px; text-align:left; font-size:16px; font-weight:800; }
+    table.p-items{ width:100%; border-collapse:collapse; margin-top:8px; }
+    table.p-items th{ background:#1E2A38; color:#fff; padding:7px; font-size:12px; }
+    table.p-items td{ padding:7px; border-bottom:1px solid #ddd; text-align:center; font-size:12px; }
+    .p-grand{ margin-top:14px; text-align:left; font-size:15px; font-weight:800; }
+    .p-foot{ margin-top:22px; text-align:center; font-size:11px; font-style:italic; color:#666; }
+    .p-sign{ margin-top:26px; text-align:left; font-size:12.5px; }
   }
 </style>
 </head>
@@ -225,7 +198,7 @@
 <div id="gate">
   <div class="gate-card">
     <div class="gate-logo">HARKAT</div>
-    <div class="gate-sub">نظام الفواتير الداخلي — لأصحاب الشركة فقط</div>
+    <div class="gate-sub">هذا الموقع خاص بأصحاب الشركة فقط</div>
     <input type="password" id="pwInput" placeholder="أدخل كلمة السر" onkeydown="if(event.key==='Enter')checkPassword()">
     <button onclick="checkPassword()">دخول</button>
     <div id="gate-error"></div>
@@ -234,95 +207,84 @@
 
 <!-- ============ APP ============ -->
 <div id="app">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">H</div>
-      <div class="brand-text">
-        <b>شركة هركت — HARKAT</b>
-        <span>Automotive Parts Agent · نظام الفواتير</span>
+  <div class="wrap">
+    <div class="sheet">
+      <div class="letterhead">
+        <div class="lh-top">
+          <div>
+            <div class="lh-name">شركة هركت — HARKAT</div>
+            <div class="lh-tag">Automotive Parts Agent · وكيل قطع غيار سيارات</div>
+          </div>
+          <div class="lh-no">رقم الفاتورة No.<br><b id="invNo">—</b></div>
+        </div>
+        <div class="lh-desc">لبيع قطع غيار السيارات الأصلية والتجارية بأفضل الأسعار، مع خدمة توريد وتوصيل سريعة لكافة الماركات.</div>
+        <div class="lh-contact">الموصل، العراق &nbsp;|&nbsp; للتواصل: ضع رقم الهاتف هنا</div>
       </div>
-    </div>
-    <div class="tabs">
-      <button class="tab-btn active" id="tabNewBtn" onclick="showView('new')">＋ وصل جديد</button>
-      <button class="tab-btn" id="tabAllBtn" onclick="showView('all')">📋 عرض الكل</button>
-    </div>
-  </header>
 
-  <main>
-    <!-- ===== NEW RECEIPT VIEW ===== -->
-    <div class="view active" id="view-new">
-      <div class="card">
-        <div class="card-inner">
-          <div class="section-title">بيانات الزبون <span class="chip">وصل جديد</span></div>
-          <div class="grid3">
-            <div class="field"><label>اسم الزبون *</label><input type="text" id="custName" placeholder="مثال: أحمد عباس علي"></div>
-            <div class="field"><label>عنوان الزبون</label><input type="text" id="custAddress" placeholder="مثال: صناعية كوكجليل، الموصل"></div>
-            <div class="field"><label>رقم الهاتف</label><input type="tel" id="custPhone" placeholder="اختياري"></div>
-          </div>
-          <div class="grid3">
-            <div class="field"><label>تاريخ الفاتورة *</label><input type="date" id="invDate"></div>
-            <div class="field"><label>رقم الفاتورة</label><input type="text" id="invNo" placeholder="يُعطى تلقائياً عند الحفظ" disabled></div>
-          </div>
+      <div class="meta">
+        <div class="meta-row"><label>التاريخ</label><input type="date" id="invDate"></div>
+        <div class="meta-row"><label>حضرة السيد</label><input type="text" id="custName" placeholder="اسم الزبون"></div>
+        <div class="meta-row"><label>العنوان</label><input type="text" id="custAddress" placeholder="عنوان الزبون"></div>
+        <div class="meta-row"><label>رقم الهاتف</label><input type="tel" id="custPhone" placeholder="اختياري"></div>
+      </div>
+
+      <div class="items-wrap">
+        <table class="items">
+          <thead>
+            <tr>
+              <th style="width:6%">ت<br><small>No.</small></th>
+              <th style="width:32%">التفاصيل<br><small>Details</small></th>
+              <th style="width:14%">العدد<br><small>Qty</small></th>
+              <th style="width:19%">سعر المفرد<br><small>Price</small></th>
+              <th style="width:19%">المبلغ الكلي<br><small>Total</small></th>
+              <th style="width:6%"></th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+        <button class="add-row-btn" onclick="addItemRow()">＋ إضافة سطر</button>
+      </div>
+
+      <div class="totals">
+        <div class="totals-box">
+          <div class="t-row"><span>المبلغ المدفوع</span><input type="number" id="paidAmount" value="0" min="0" oninput="recalcGrandTotal()"></div>
+          <div class="t-row"><span>المتبقي</span><span class="num" id="remainAmount">0.00</span></div>
+          <div class="t-grand"><span>المجموع Total</span><span class="num" id="grandTotal">0.00</span></div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-inner">
-          <div class="section-title">المنتجات</div>
-          <table class="items">
-            <thead>
-              <tr>
-                <th style="width:26%">اسم المادة</th>
-                <th style="width:18%">الماركة</th>
-                <th style="width:12%">الكمية</th>
-                <th style="width:16%">سعر الوحدة</th>
-                <th style="width:18%">المجموع</th>
-                <th style="width:6%"></th>
-              </tr>
-            </thead>
-            <tbody id="itemsBody"></tbody>
-          </table>
-          <button class="add-row-btn" onclick="addItemRow()">＋ إضافة مادة</button>
+      <div class="footnote">الخطأ والسهو مرجوع للطرفين</div>
+      <div class="signature">التوقيع: <b>______________</b></div>
 
-          <div class="totals">
-            <div class="totals-box">
-              <div class="totals-row"><span>عدد المواد</span><span class="num" id="itemCount">0</span></div>
-              <div class="field" style="margin-top:8px;">
-                <label>المبلغ المدفوع (اختياري)</label>
-                <input type="number" id="paidAmount" value="0" min="0" oninput="recalcGrandTotal()">
-              </div>
-              <div class="totals-row"><span>المتبقي</span><span class="num" id="remainAmount">0.00</span></div>
-              <div class="totals-row grand"><span>الإجمالي الكلي</span><span class="num" id="grandTotal">0.00</span></div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button class="btn btn-primary" onclick="saveReceipt()">💾 حفظ الوصل</button>
-            <button class="btn btn-outline" onclick="printCurrentForm()">🖨️ طباعة</button>
-            <button class="btn btn-ghost" onclick="newReceipt(true)">🔄 وصل جديد</button>
-          </div>
-        </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveReceipt()">💾 حفظ الوصل</button>
+        <button class="btn btn-outline" onclick="loadAllReceipts()">✏️ تحديث البيانات</button>
+        <button class="btn btn-ghost" onclick="newReceipt(true)">🧾 وصل جديد</button>
+        <button class="btn btn-outline" onclick="openPanel()">📋 عرض الكل</button>
+        <button class="btn btn-outline" onclick="printCurrentForm()">🖨️ طباعة</button>
+        <button class="btn btn-danger" onclick="deleteAllReceipts()">🗑️ حذف الكل</button>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- ===== ALL RECEIPTS VIEW ===== -->
-    <div class="view" id="view-all">
-      <div class="card">
-        <div class="card-inner">
-          <div class="section-title">كل الوصولات <span class="chip" id="totalCountChip">0</span></div>
-          <div class="toolbar">
-            <div class="search-wrap">
-              <input type="text" id="searchInput" placeholder="ابحث باسم الزبون..." oninput="renderList()">
-              <span class="icon">🔍</span>
-            </div>
-            <button class="btn btn-outline" onclick="loadAllReceipts()">↻ تحديث البيانات</button>
-            <button class="btn btn-danger" onclick="deleteAllReceipts()">🗑️ حذف الكل</button>
-          </div>
-          <div id="listWrap"></div>
+<!-- ===== ALL RECEIPTS PANEL ===== -->
+<div id="panelOverlay">
+  <div class="panel">
+    <div class="panel-head">
+      <b>كل الوصولات المحفوظة <span class="chip" id="totalCountChip">0</span></b>
+      <button class="panel-close" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="ابحث باسم الزبون..." oninput="renderList()">
+          <span class="icon">🔍</span>
         </div>
       </div>
+      <div id="listWrap"></div>
     </div>
-  </main>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -330,29 +292,31 @@
 <!-- ===== PRINT TEMPLATE ===== -->
 <div id="printArea">
   <div class="p-head">
-    <div class="p-brand"><b>شركة هركت — HARKAT</b><span>Automotive Parts Agent</span></div>
-    <div class="p-tag">فاتورة مبيعات</div>
+    <b>شركة هركت — HARKAT</b><span>Automotive Parts Agent</span>
+    <div class="p-desc">لبيع قطع غيار السيارات الأصلية والتجارية | الموصل، العراق</div>
   </div>
   <div class="p-meta">
     <div>
-      <div><b>اسم الزبون:</b> <span id="pCustName"></span></div>
-      <div><b>عنوان الزبون:</b> <span id="pCustAddress"></span></div>
-      <div><b>رقم الهاتف:</b> <span id="pCustPhone"></span></div>
+      <div><b>حضرة السيد:</b> <span id="pCustName"></span></div>
+      <div><b>العنوان:</b> <span id="pCustAddress"></span></div>
+      <div><b>الهاتف:</b> <span id="pCustPhone"></span></div>
     </div>
     <div>
       <div><b>رقم الفاتورة:</b> <span id="pInvNo"></span></div>
-      <div><b>تاريخ الفاتورة:</b> <span id="pInvDate"></span></div>
+      <div><b>التاريخ:</b> <span id="pInvDate"></span></div>
     </div>
   </div>
   <table class="p-items">
-    <thead><tr><th>اسم المادة</th><th>الماركة</th><th>الكمية</th><th>سعر الوحدة</th><th>المجموع</th></tr></thead>
+    <thead><tr><th>ت</th><th>التفاصيل</th><th>العدد</th><th>سعر المفرد</th><th>المبلغ الكلي</th></tr></thead>
     <tbody id="pItemsBody"></tbody>
   </table>
   <div class="p-grand">
     <div>المبلغ المدفوع: <span id="pPaid"></span></div>
     <div>المتبقي: <span id="pRemain"></span></div>
-    <div>الإجمالي الكلي: <span id="pGrand"></span></div>
+    <div>المجموع الكلي: <span id="pGrand"></span></div>
   </div>
+  <div class="p-foot">الخطأ والسهو مرجوع للطرفين</div>
+  <div class="p-sign">التوقيع: ______________</div>
 </div>
 
 <!-- ============ FIREBASE ============ -->
@@ -368,6 +332,7 @@
     messagingSenderId: "899045671707",
     appId: "1:899045671707:web:e6039045cd6d1b7f2909be"
   };
+
   let db = null;
   let receiptsRef = null;
   let firebaseReady = false;
@@ -393,22 +358,13 @@
     }
     if(!firebaseReady){
       document.getElementById('gate-error').textContent =
-        'تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت، ومن أنك تفتح الموقع من رابطه الحقيقي (GitHub Pages) وليس من معاينة الدردشة.';
+        'تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت ومن فتح الموقع من رابطه الحقيقي.';
       return;
     }
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     newReceipt(false);
     loadAllReceipts();
-  }
-
-  // ---------------- TABS ----------------
-  function showView(name){
-    document.getElementById('view-new').classList.toggle('active', name === 'new');
-    document.getElementById('view-all').classList.toggle('active', name === 'all');
-    document.getElementById('tabNewBtn').classList.toggle('active', name === 'new');
-    document.getElementById('tabAllBtn').classList.toggle('active', name === 'all');
-    if(name === 'all') loadAllReceipts();
   }
 
   // ---------------- TOAST ----------------
@@ -419,6 +375,15 @@
     setTimeout(()=>{ t.className = 'toast'; }, 2600);
   }
 
+  // ---------------- PANEL ----------------
+  function openPanel(){
+    document.getElementById('panelOverlay').classList.add('show');
+    loadAllReceipts();
+  }
+  function closePanel(){
+    document.getElementById('panelOverlay').classList.remove('show');
+  }
+
   // ---------------- ITEMS TABLE ----------------
   let itemRowId = 0;
   function addItemRow(){
@@ -426,9 +391,10 @@
     const id = itemRowId;
     const tr = document.createElement('tr');
     tr.id = 'row-' + id;
+    const rowNum = document.querySelectorAll('#itemsBody tr').length + 1;
     tr.innerHTML = `
+      <td class="num">${rowNum}</td>
       <td><input type="text" id="name-${id}" placeholder="اسم المادة"></td>
-      <td><input type="text" id="brand-${id}" placeholder="الماركة"></td>
       <td><input type="number" id="qty-${id}" value="1" min="0" oninput="recalcRow(${id})"></td>
       <td><input type="number" id="price-${id}" value="0" min="0" oninput="recalcRow(${id})"></td>
       <td class="row-total num" id="total-${id}">0.00</td>
@@ -440,7 +406,13 @@
   function removeItemRow(id){
     const row = document.getElementById('row-' + id);
     if(row) row.remove();
+    renumberRows();
     recalcGrandTotal();
+  }
+  function renumberRows(){
+    document.querySelectorAll('#itemsBody tr').forEach((r, i)=>{
+      r.children[0].textContent = i + 1;
+    });
   }
   function recalcRow(id){
     const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
@@ -456,7 +428,6 @@
       const totalEl = document.getElementById('total-' + id);
       if(totalEl) grand += parseFloat(totalEl.textContent) || 0;
     });
-    document.getElementById('itemCount').textContent = rows.length;
     document.getElementById('grandTotal').textContent = grand.toFixed(2);
     const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
     document.getElementById('remainAmount').textContent = (grand - paid).toFixed(2);
@@ -469,12 +440,9 @@
     rows.forEach(r=>{
       const id = r.id.split('-')[1];
       const name = document.getElementById('name-' + id).value.trim();
-      const brand = document.getElementById('brand-' + id).value.trim();
       const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
       const price = parseFloat(document.getElementById('price-' + id).value) || 0;
-      if(name){
-        items.push({ name, brand, qty, price, total: qty * price });
-      }
+      if(name){ items.push({ name, qty, price, total: qty * price }); }
     });
     return items;
   }
@@ -485,9 +453,10 @@
     document.getElementById('custAddress').value = '';
     document.getElementById('custPhone').value = '';
     document.getElementById('invDate').value = '';
-    document.getElementById('invNo').value = '';
+    document.getElementById('invNo').textContent = '—';
     document.getElementById('paidAmount').value = 0;
     document.getElementById('itemsBody').innerHTML = '';
+    itemRowId = 0;
     addItemRow();
     if(showToast) toast('تم فتح وصل جديد', 'success');
   }
@@ -503,7 +472,7 @@
     const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
 
     if(!custName){ toast('الرجاء إدخال اسم الزبون', 'error'); return; }
-    if(!invDate){ toast('الرجاء اختيار تاريخ الفاتورة', 'error'); return; }
+    if(!invDate){ toast('الرجاء اختيار التاريخ', 'error'); return; }
     if(items.length === 0){ toast('أضف مادة واحدة على الأقل', 'error'); return; }
 
     try{
@@ -523,7 +492,7 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      document.getElementById('invNo').value = receiptNo;
+      document.getElementById('invNo').textContent = receiptNo;
       toast('تم حفظ الوصل رقم ' + receiptNo + ' بنجاح', 'success');
       loadAllReceipts();
     }catch(err){
@@ -536,16 +505,17 @@
   let allReceipts = [];
   async function loadAllReceipts(){
     const wrap = document.getElementById('listWrap');
-    wrap.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+    if(wrap) wrap.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
     try{
       const snap = await receiptsRef.orderBy('createdAt', 'desc').get();
       allReceipts = [];
       snap.forEach(doc=> allReceipts.push({ id: doc.id, ...doc.data() }));
       document.getElementById('totalCountChip').textContent = allReceipts.length;
       renderList();
+      toast('تم تحديث البيانات', 'success');
     }catch(err){
       console.error(err);
-      wrap.innerHTML = '<div class="empty-state">تعذر تحميل البيانات، تحقق من الاتصال</div>';
+      if(wrap) wrap.innerHTML = '<div class="empty-state">تعذر تحميل البيانات، تحقق من الاتصال</div>';
     }
   }
 
@@ -619,9 +589,9 @@
     document.getElementById('pInvDate').textContent = data.invoiceDate || '-';
     const body = document.getElementById('pItemsBody');
     body.innerHTML = '';
-    (data.items || []).forEach(it=>{
+    (data.items || []).forEach((it, i)=>{
       body.innerHTML += `<tr>
-        <td>${it.name}</td><td>${it.brand || '-'}</td><td>${it.qty}</td>
+        <td>${i+1}</td><td>${it.name}</td><td>${it.qty}</td>
         <td>${Number(it.price).toFixed(2)}</td><td>${Number(it.total).toFixed(2)}</td>
       </tr>`;
     });
@@ -639,7 +609,7 @@
       customerName: document.getElementById('custName').value,
       customerAddress: document.getElementById('custAddress').value,
       customerPhone: document.getElementById('custPhone').value,
-      receiptNo: document.getElementById('invNo').value,
+      receiptNo: document.getElementById('invNo').textContent,
       invoiceDate: document.getElementById('invDate').value,
       items, grandTotal: grand, paidAmount: paid, remainAmount: grand - paid
     });
