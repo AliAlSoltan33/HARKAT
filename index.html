@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>القيدار | برمجة وفحص مرسيدس</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0a0a0a;
+      --dark: #111111;
+      --card: #161616;
+      --silver: #c0c0c0;
+      --silver-light: #e8e8e8;
+      --gold: #b8960c;
+      --gold-light: #d4af37;
+      --white: #f5f5f5;
+      --text-muted: #888;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 5%;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(184,150,12,0.2);
+    }
+    .logo {
+      font-size: 1.5rem; font-weight: 900; letter-spacing: 1px;
+      color: var(--white);
+    }
+    .logo span { color: var(--gold-light); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--silver); text-decoration: none; font-size: 0.95rem;
+      font-weight: 500; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 8rem 5% 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 30%, rgba(184,150,12,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(192,192,192,0.04) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 3px;
+      padding: 0.4rem 1.2rem; border-radius: 100px;
+      margin-bottom: 2rem;
+      animation: fadeDown 0.8s ease both;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      font-weight: 900; line-height: 1.1;
+      animation: fadeDown 0.9s ease 0.1s both;
+    }
+    .hero h1 span { color: var(--gold-light); }
+    .hero p {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--silver); max-width: 560px;
+      line-height: 1.8; font-weight: 300;
+      animation: fadeDown 1s ease 0.2s both;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeDown 1.1s ease 0.3s both;
+    }
+    .btn-primary {
+      background: var(--gold); color: var(--black);
+      padding: 0.85rem 2.2rem; border-radius: 6px;
+      font-family: 'Tajawal', sans-serif; font-size: 1rem; font-weight: 700;
+      border: none; cursor: pointer; transition: background 0.3s, transform 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: var(--silver);
+      padding: 0.85rem 2.2rem; border-radius: 6px;
+      font-family: 'Tajawal', sans-serif; font-size: 1rem; font-weight: 500;
+      border: 1px solid rgba(192,192,192,0.3); cursor: pointer; transition: all 0.3s;
+      text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .star-line {
+      margin-top: 4rem;
+      display: flex; align-items: center; gap: 1rem;
+      animation: fadeDown 1.2s ease 0.4s both;
+    }
+    .star-line::before, .star-line::after {
+      content: ''; flex: 1; height: 1px; background: rgba(192,192,192,0.2);
+    }
+    .star-line span { color: var(--gold); font-size: 1.2rem; }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
+      padding: 3rem 5%;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2.8rem; font-weight: 900; color: var(--gold-light); line-height: 1; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; font-weight: 400; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 6rem 5%; }
+    .section-tag {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 4px;
+      color: var(--gold); text-transform: uppercase; margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      color: var(--text-muted); font-size: 1rem; line-height: 1.8;
+      max-width: 540px; font-weight: 300;
+    }
+
+    /* ── SERVICES ── */
+    #services { background: var(--dark); }
+    .services-header { text-align: center; margin-bottom: 4rem; }
+    .services-header .section-desc { margin: 0 auto; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; padding: 2rem;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, rgba(184,150,12,0.12) 0%, transparent 70%);
+    }
+    .service-card:hover { border-color: rgba(184,150,12,0.4); transform: translateY(-4px); }
+    .service-icon {
+      font-size: 2.2rem; margin-bottom: 1.2rem;
+      display: inline-block;
+    }
+    .service-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.7rem; }
+    .service-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+    /* ── WHY US ── */
+    #why {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+      align-items: center; max-width: 1100px; margin: 0 auto;
+    }
+    .why-visual {
+      background: var(--card);
+      border: 1px solid rgba(184,150,12,0.2);
+      border-radius: 16px; padding: 3rem 2rem;
+      text-align: center; position: relative;
+    }
+    .mb-logo {
+      font-size: 7rem; line-height: 1;
+      background: linear-gradient(135deg, var(--silver) 0%, var(--gold-light) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem; font-weight: 900;
+    }
+    .why-visual p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+    .points { list-style: none; margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+    .points li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      font-size: 0.95rem; line-height: 1.6;
+    }
+    .points li::before {
+      content: '✦'; color: var(--gold); font-size: 0.8rem;
+      flex-shrink: 0; margin-top: 0.2rem;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--dark); }
+    .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .contact-inner .section-desc { margin: 0 auto 2.5rem; }
+    .contact-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem; margin-bottom: 2.5rem;
+    }
+    .contact-card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; padding: 1.5rem;
+      text-decoration: none; color: inherit;
+      transition: border-color 0.3s, transform 0.3s;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .contact-card:hover { border-color: rgba(184,150,12,0.4); transform: translateY(-3px); }
+    .contact-card .icon { font-size: 1.8rem; }
+    .contact-card .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
+    .contact-card .value { font-size: 0.95rem; font-weight: 600; color: var(--silver-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem 5%;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    footer p { font-size: 0.85rem; color: var(--text-muted); }
+    footer span { color: var(--gold-light); font-weight: 700; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      #why { grid-template-columns: 1fr; gap: 3rem; }
+      .stats { gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">القيدار <span>★</span></div>
+  <ul class="nav-links">
+    <li><a href="#services">خدماتنا</a></li>
+    <li><a href="#why">لماذا نحن</a></li>
+    <li><a href="#contact">تواصل معنا</a></li>
+  </ul>
+  <a href="#contact" class="btn-primary" style="font-size:0.85rem;padding:0.6rem 1.4rem;">احجز موعد</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">متخصصون في مرسيدس بنز</div>
+  <h1>القيدار<br/><span>للبرمجة وفحص مرسيدس</span></h1>
+  <p>خبرة احترافية في تشخيص وبرمجة وصيانة سيارات مرسيدس بنز بأحدث الأجهزة والتقنيات</p>
+  <div class="hero-cta">
+    <a href="#contact" class="btn-primary">احجز موعدك الآن</a>
+    <a href="#services" class="btn-outline">تعرف على خدماتنا</a>
+  </div>
+  <div class="star-line"><span>✦</span></div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">+500</div>
+    <div class="stat-label">سيارة تم فحصها</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">+10</div>
+    <div class="stat-label">سنوات خبرة</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">%98</div>
+    <div class="stat-label">رضا العملاء</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">24</div>
+    <div class="stat-label">ساعة دعم فني</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header">
+    <div class="section-tag">خدماتنا</div>
+    <h2 class="section-title">ماذا نقدم لك؟</h2>
+    <p class="section-desc">نوفر حلولاً متكاملة لسيارات مرسيدس بنز بمعايير عالمية</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🔌</div>
+      <h3>برمجة الوحدات الإلكترونية</h3>
+      <p>برمجة وتحديث جميع الوحدات الإلكترونية (ECU) بأحدث الإصدارات باستخدام برامج مرسيدس الأصلية.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔍</div>
+      <h3>الفحص الشامل</h3>
+      <p>فحص دقيق لجميع أنظمة السيارة وقراءة الأعطال وتقديم تقرير مفصل بالحالة الكاملة.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🗝️</div>
+      <h3>برمجة المفاتيح والريموت</h3>
+      <p>برمجة المفاتيح الذكية وريموتات التحكم لجميع موديلات مرسيدس بنز.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">💡</div>
+      <h3>إطفاء الأعطال</h3>
+      <p>تشخيص وإزالة أكواد الأعطال والمصابيح التحذيرية من جميع أجهزة التحكم.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">⚙️</div>
+      <h3>ترميز وضبط الأنظمة</h3>
+      <p>ترميز وضبط خيارات السيارة كالكاميرات وأنظمة الأمان والراحة وفق تفضيلاتك.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📊</div>
+      <h3>فحص ما قبل الشراء</h3>
+      <p>فحص احترافي وشامل لسيارة مرسيدس قبل شرائها لضمان سلامتك وحقك.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section style="padding: 6rem 5%;">
+  <div id="why">
+    <div>
+      <div class="section-tag">لماذا نحن</div>
+      <h2 class="section-title">الثقة والاحترافية في كل تفصيل</h2>
+      <p class="section-desc">نضع ثقتك فوق كل اعتبار، ونعمل بشفافية تامة مع كل عميل.</p>
+      <ul class="points">
+        <li>متخصصون حصراً في سيارات مرسيدس بنز بخبرة عميقة</li>
+        <li>أجهزة تشخيص أصلية من مرسيدس (Xentry / Das)</li>
+        <li>تقارير مفصلة وشفافية كاملة في كل خطوة</li>
+        <li>أسعار تنافسية مع ضمان على جميع الأعمال</li>
+        <li>دعم فني متواصل ما بعد الخدمة</li>
+      </ul>
+    </div>
+    <div class="why-visual">
+      <div class="mb-logo">★</div>
+      <p style="font-size:1.1rem;font-weight:700;color:var(--silver-light);margin-bottom:0.4rem;">مرسيدس بنز</p>
+      <p>نتعامل مع أفضل العلامات التجارية باحترافية لا تُضاهى</p>
+      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08);">
+        <div style="color:var(--gold-light);font-size:1.4rem;font-weight:900;">Xentry · DAS</div>
+        <div style="color:var(--text-muted);font-size:0.8rem;margin-top:0.3rem;">أجهزة الفحص الرسمية</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-tag" style="text-align:center;">تواصل معنا</div>
+    <h2 class="section-title">نحن هنا لمساعدتك</h2>
+    <p class="section-desc">تواصل معنا لحجز موعدك أو للاستفسار عن أي شيء يتعلق بسيارتك</p>
+    <div class="contact-grid">
+      <a class="contact-card" href="tel:+9647XXXXXXXX">
+        <div class="icon">📞</div>
+        <div class="label">اتصل بنا</div>
+        <div class="value">+964 7XX XXX XXXX</div>
+      </a>
+      <a class="contact-card" href="https://wa.me/9647XXXXXXXX" target="_blank">
+        <div class="icon">💬</div>
+        <div class="label">واتساب</div>
+        <div class="value">تحدث معنا مباشرة</div>
+      </a>
+      <a class="contact-card" href="#">
+        <div class="icon">📍</div>
+        <div class="label">الموقع</div>
+        <div class="value">أضف عنوانك هنا</div>
+      </a>
+    </div>
+    <a href="https://wa.me/9647XXXXXXXX" target="_blank" class="btn-primary" style="font-size:1.05rem;padding:1rem 3rem;">
+      احجز موعدك عبر واتساب
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <span>القيدار</span> لبرمجة وفحص مرسيدس — جميع الحقوق محفوظة</p>
+  <p style="font-size:0.8rem;">متخصصون في مرسيدس بنز ✦</p>
+</footer>
+
+</body>
+</html>
