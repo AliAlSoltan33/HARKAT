@@ -1,398 +1,657 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>القيدار | برمجة وفحص مرسيدس</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --black: #0a0a0a;
-      --dark: #111111;
-      --card: #161616;
-      --silver: #c0c0c0;
-      --silver-light: #e8e8e8;
-      --gold: #b8960c;
-      --gold-light: #d4af37;
-      --white: #f5f5f5;
-      --text-muted: #888;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هركت | نظام الفواتير</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF6EF;
+    --paper:#FFFFFF;
+    --ink:#23262B;
+    --ink-soft:#6B6F76;
+    --line:#E6DFD0;
+    --navy:#1E2A38;
+    --navy-soft:#2E3F52;
+    --orange:#E08A2C;
+    --orange-dark:#C9741A;
+    --orange-tint:#FBEBD6;
+    --green:#4C8C5D;
+    --green-tint:#E7F1E9;
+    --red:#C0503D;
+    --red-tint:#F7E9E6;
+    --shadow: 0 10px 30px rgba(30,42,56,.09);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Tajawal', sans-serif;
+    min-height:100vh;
+  }
+  .num{ font-family:'Courier New', monospace; direction:ltr; unicode-bidi:isolate; }
 
-    html { scroll-behavior: smooth; }
+  /* ---------- Gate ---------- */
+  #gate{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(224,138,44,.10), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(30,42,56,.06), transparent 40%),
+      var(--bg);
+  }
+  .gate-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:18px;
+    padding:40px 34px; width:340px; box-shadow:var(--shadow); text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .gate-card::before{
+    content:""; position:absolute; top:0; right:0; width:56px; height:56px;
+    background:var(--orange); border-radius:0 0 0 18px;
+  }
+  .gate-logo{ font-weight:800; font-size:26px; color:var(--navy); letter-spacing:.5px;}
+  .gate-sub{ color:var(--ink-soft); font-size:13px; margin-top:4px; margin-bottom:24px;}
+  #gate input{
+    width:100%; padding:13px 14px; border-radius:10px; border:1px solid var(--line);
+    background:var(--bg); font-family:inherit; font-size:15px; text-align:center;
+    outline:none; transition:.2s;
+  }
+  #gate input:focus{ border-color:var(--orange); background:#fff; }
+  #gate button{
+    width:100%; margin-top:14px; padding:13px; border:none; border-radius:10px;
+    background:var(--navy); color:#fff; font-family:inherit; font-weight:700; font-size:15px;
+    cursor:pointer; transition:.2s;
+  }
+  #gate button:hover{ background:var(--navy-soft); }
+  #gate-error{ color:var(--red); font-size:13px; margin-top:12px; height:16px; }
 
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background: var(--black);
-      color: var(--white);
-      overflow-x: hidden;
-    }
+  /* ---------- App shell ---------- */
+  #app{ display:none; }
+  header.topbar{
+    background:var(--navy); color:#fff; padding:18px 22px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    box-shadow:var(--shadow);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px; background:var(--orange);
+    display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--navy); font-size:18px;
+  }
+  .brand-text b{ display:block; font-size:19px; font-weight:800; }
+  .brand-text span{ display:block; font-size:11.5px; color:#B9C2CC; letter-spacing:.5px; }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; width: 100%; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.2rem 5%;
-      background: rgba(10,10,10,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(184,150,12,0.2);
-    }
-    .logo {
-      font-size: 1.5rem; font-weight: 900; letter-spacing: 1px;
-      color: var(--white);
-    }
-    .logo span { color: var(--gold-light); }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      color: var(--silver); text-decoration: none; font-size: 0.95rem;
-      font-weight: 500; transition: color 0.3s;
-    }
-    .nav-links a:hover { color: var(--gold-light); }
+  .tabs{ display:flex; gap:8px; }
+  .tab-btn{
+    padding:9px 18px; border-radius:9px; border:1px solid rgba(255,255,255,.18);
+    background:transparent; color:#DDE3E9; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer;
+    transition:.2s;
+  }
+  .tab-btn.active{ background:var(--orange); border-color:var(--orange); color:#fff; }
+  .tab-btn:not(.active):hover{ background:rgba(255,255,255,.08); }
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center;
-      padding: 8rem 5% 5rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 70% 50% at 50% 30%, rgba(184,150,12,0.08) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(192,192,192,0.04) 0%, transparent 60%);
-    }
-    .hero-badge {
-      display: inline-block;
-      border: 1px solid var(--gold);
-      color: var(--gold-light);
-      font-size: 0.8rem; font-weight: 700; letter-spacing: 3px;
-      padding: 0.4rem 1.2rem; border-radius: 100px;
-      margin-bottom: 2rem;
-      animation: fadeDown 0.8s ease both;
-    }
-    .hero h1 {
-      font-size: clamp(2.5rem, 7vw, 5.5rem);
-      font-weight: 900; line-height: 1.1;
-      animation: fadeDown 0.9s ease 0.1s both;
-    }
-    .hero h1 span { color: var(--gold-light); }
-    .hero p {
-      margin-top: 1.5rem;
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--silver); max-width: 560px;
-      line-height: 1.8; font-weight: 300;
-      animation: fadeDown 1s ease 0.2s both;
-    }
-    .hero-cta {
-      margin-top: 2.5rem;
-      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-      animation: fadeDown 1.1s ease 0.3s both;
-    }
-    .btn-primary {
-      background: var(--gold); color: var(--black);
-      padding: 0.85rem 2.2rem; border-radius: 6px;
-      font-family: 'Tajawal', sans-serif; font-size: 1rem; font-weight: 700;
-      border: none; cursor: pointer; transition: background 0.3s, transform 0.2s;
-      text-decoration: none;
-    }
-    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
-    .btn-outline {
-      background: transparent; color: var(--silver);
-      padding: 0.85rem 2.2rem; border-radius: 6px;
-      font-family: 'Tajawal', sans-serif; font-size: 1rem; font-weight: 500;
-      border: 1px solid rgba(192,192,192,0.3); cursor: pointer; transition: all 0.3s;
-      text-decoration: none;
-    }
-    .btn-outline:hover { border-color: var(--gold); color: var(--gold-light); }
+  main{ max-width:1000px; margin:26px auto; padding:0 18px 60px; }
+  .view{ display:none; }
+  .view.active{ display:block; }
 
-    .star-line {
-      margin-top: 4rem;
-      display: flex; align-items: center; gap: 1rem;
-      animation: fadeDown 1.2s ease 0.4s both;
-    }
-    .star-line::before, .star-line::after {
-      content: ''; flex: 1; height: 1px; background: rgba(192,192,192,0.2);
-    }
-    .star-line span { color: var(--gold); font-size: 1.2rem; }
+  .card{
+    background:var(--paper); border:1px solid var(--line); border-radius:16px;
+    padding:26px; box-shadow:var(--shadow); margin-bottom:20px; position:relative; overflow:hidden;
+  }
+  .card::before{
+    content:""; position:absolute; top:0; right:0; width:10px; height:100%; background:var(--orange);
+  }
+  .card-inner{ padding-right:8px; }
 
-    /* ── STATS ── */
-    .stats {
-      display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
-      padding: 3rem 5%;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .stat { text-align: center; }
-    .stat-num { font-size: 2.8rem; font-weight: 900; color: var(--gold-light); line-height: 1; }
-    .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; font-weight: 400; }
+  .section-title{
+    display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; color:var(--navy);
+    margin-bottom:18px;
+  }
+  .section-title .chip{
+    background:var(--orange-tint); color:var(--orange-dark); font-size:11.5px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
 
-    /* ── SECTION COMMON ── */
-    section { padding: 6rem 5%; }
-    .section-tag {
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 4px;
-      color: var(--gold); text-transform: uppercase; margin-bottom: 0.8rem;
-    }
-    .section-title {
-      font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; line-height: 1.2;
-      margin-bottom: 1rem;
-    }
-    .section-desc {
-      color: var(--text-muted); font-size: 1rem; line-height: 1.8;
-      max-width: 540px; font-weight: 300;
-    }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .grid2, .grid3{ grid-template-columns:1fr; } }
 
-    /* ── SERVICES ── */
-    #services { background: var(--dark); }
-    .services-header { text-align: center; margin-bottom: 4rem; }
-    .services-header .section-desc { margin: 0 auto; }
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem; max-width: 1100px; margin: 0 auto;
-    }
-    .service-card {
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px; padding: 2rem;
-      transition: border-color 0.3s, transform 0.3s;
-      position: relative; overflow: hidden;
-    }
-    .service-card::before {
-      content: '';
-      position: absolute; top: 0; right: 0;
-      width: 80px; height: 80px;
-      background: radial-gradient(circle, rgba(184,150,12,0.12) 0%, transparent 70%);
-    }
-    .service-card:hover { border-color: rgba(184,150,12,0.4); transform: translateY(-4px); }
-    .service-icon {
-      font-size: 2.2rem; margin-bottom: 1.2rem;
-      display: inline-block;
-    }
-    .service-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.7rem; }
-    .service-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+  label{ display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; font-weight:500; }
+  input[type=text], input[type=date], input[type=tel], input[type=number]{
+    width:100%; padding:11px 12px; border-radius:9px; border:1px solid var(--line);
+    background:var(--bg); font-family:inherit; font-size:14.5px; color:var(--ink); outline:none; transition:.2s;
+  }
+  input:focus{ border-color:var(--orange); background:#fff; }
+  .field{ margin-bottom:14px; }
 
-    /* ── WHY US ── */
-    #why {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
-      align-items: center; max-width: 1100px; margin: 0 auto;
-    }
-    .why-visual {
-      background: var(--card);
-      border: 1px solid rgba(184,150,12,0.2);
-      border-radius: 16px; padding: 3rem 2rem;
-      text-align: center; position: relative;
-    }
-    .mb-logo {
-      font-size: 7rem; line-height: 1;
-      background: linear-gradient(135deg, var(--silver) 0%, var(--gold-light) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1rem; font-weight: 900;
-    }
-    .why-visual p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
-    .points { list-style: none; margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
-    .points li {
-      display: flex; align-items: flex-start; gap: 1rem;
-      font-size: 0.95rem; line-height: 1.6;
-    }
-    .points li::before {
-      content: '✦'; color: var(--gold); font-size: 0.8rem;
-      flex-shrink: 0; margin-top: 0.2rem;
-    }
+  table.items{ width:100%; border-collapse:collapse; margin-top:6px; }
+  table.items th{
+    background:var(--navy); color:#fff; font-size:13px; font-weight:700; padding:11px 8px; text-align:center;
+  }
+  table.items th:first-child{ border-radius:9px 0 0 0; }
+  table.items th:last-child{ border-radius:0 9px 0 0; }
+  table.items td{ padding:8px 6px; border-bottom:1px solid var(--line); text-align:center; }
+  table.items td input{ text-align:center; padding:9px 6px; }
+  table.items tr:hover td{ background:#FCFAF5; }
+  .row-total{ font-weight:700; color:var(--navy); }
+  .del-row{
+    background:var(--red-tint); color:var(--red); border:none; width:30px; height:30px; border-radius:8px;
+    cursor:pointer; font-size:15px; font-weight:700; line-height:1;
+  }
+  .del-row:hover{ opacity:.8; }
+  .add-row-btn{
+    margin-top:12px; background:var(--green-tint); color:var(--green); border:1px dashed var(--green);
+    padding:9px 16px; border-radius:9px; cursor:pointer; font-family:inherit; font-weight:700; font-size:13.5px;
+  }
+  .add-row-btn:hover{ opacity:.85; }
 
-    /* ── CONTACT ── */
-    #contact { background: var(--dark); }
-    .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; }
-    .contact-inner .section-desc { margin: 0 auto 2.5rem; }
-    .contact-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem; margin-bottom: 2.5rem;
-    }
-    .contact-card {
-      background: var(--card); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px; padding: 1.5rem;
-      text-decoration: none; color: inherit;
-      transition: border-color 0.3s, transform 0.3s;
-      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-    }
-    .contact-card:hover { border-color: rgba(184,150,12,0.4); transform: translateY(-3px); }
-    .contact-card .icon { font-size: 1.8rem; }
-    .contact-card .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
-    .contact-card .value { font-size: 0.95rem; font-weight: 600; color: var(--silver-light); }
+  .totals{ margin-top:20px; display:flex; justify-content:flex-end; }
+  .totals-box{ width:280px; }
+  .totals-row{
+    display:flex; justify-content:space-between; align-items:center; padding:9px 4px; font-size:14px;
+  }
+  .totals-row.grand{
+    background:var(--navy); color:#fff; border-radius:10px; padding:14px 16px; font-weight:800; font-size:16px; margin-top:6px;
+  }
+  .totals-row.grand .num{ color:var(--orange); font-size:18px; }
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 2rem 5%;
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-    }
-    footer p { font-size: 0.85rem; color: var(--text-muted); }
-    footer span { color: var(--gold-light); font-weight: 700; }
+  .actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .btn{
+    padding:12px 18px; border-radius:10px; border:none; font-family:inherit; font-weight:700; font-size:14px;
+    cursor:pointer; transition:.2s; display:flex; align-items:center; gap:8px;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); }
+  .btn-primary{ background:var(--orange); color:#fff; }
+  .btn-primary:hover{ background:var(--orange-dark); }
+  .btn-outline{ background:#fff; color:var(--navy); border:1px solid var(--line); }
+  .btn-outline:hover{ background:var(--bg); }
+  .btn-danger{ background:var(--red-tint); color:var(--red); }
+  .btn-danger:hover{ background:#f2d9d3; }
+  .btn-ghost{ background:var(--navy); color:#fff; }
+  .btn-ghost:hover{ background:var(--navy-soft); }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy); color:#fff; padding:13px 22px; border-radius:11px; font-size:14px; font-weight:600;
+    box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.25s; z-index:999;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast.success{ background:var(--green); }
+  .toast.error{ background:var(--red); }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      #why { grid-template-columns: 1fr; gap: 3rem; }
-      .stats { gap: 2rem; }
-    }
-  </style>
+  .toolbar{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+  .search-wrap{ position:relative; flex:1; min-width:220px; }
+  .search-wrap input{ padding-right:38px; }
+  .search-wrap .icon{ position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:15px; }
+
+  table.list{ width:100%; border-collapse:collapse; }
+  table.list th{
+    background:var(--bg); color:var(--navy); font-size:12.5px; font-weight:800; padding:11px 8px;
+    border-bottom:2px solid var(--line); text-align:center;
+  }
+  table.list td{ padding:11px 8px; border-bottom:1px solid var(--line); text-align:center; font-size:13.5px; }
+  table.list tr:hover td{ background:#FCFAF5; }
+  .mini-btn{
+    border:none; border-radius:7px; padding:7px 11px; font-family:inherit; font-weight:700; font-size:12px; cursor:pointer; margin:0 3px;
+  }
+  .mini-print{ background:var(--orange-tint); color:var(--orange-dark); }
+  .mini-del{ background:var(--red-tint); color:var(--red); }
+  .empty-state{ text-align:center; padding:50px 10px; color:var(--ink-soft); }
+  .empty-state .big{ font-size:38px; margin-bottom:10px; }
+
+  /* ---------- Print ---------- */
+  #printArea{ display:none; }
+  @media print{
+    body *{ visibility:hidden; }
+    #printArea, #printArea *{ visibility:visible; }
+    #printArea{ display:block; position:absolute; top:0; right:0; left:0; padding:20px; }
+    .p-head{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #E08A2C; padding-bottom:14px; }
+    .p-brand b{ font-size:22px; } .p-brand span{ font-size:11px; color:#666; display:block; }
+    .p-tag{ background:#E08A2C; color:#fff; padding:6px 16px; border-radius:6px; font-weight:800; }
+    .p-meta{ display:flex; justify-content:space-between; margin:16px 0; font-size:13px; }
+    .p-meta div{ line-height:1.9; }
+    table.p-items{ width:100%; border-collapse:collapse; margin-top:10px; }
+    table.p-items th{ background:#1E2A38; color:#fff; padding:8px; font-size:12.5px; }
+    table.p-items td{ padding:8px; border-bottom:1px solid #ddd; text-align:center; font-size:12.5px; }
+    .p-grand{ margin-top:16px; text-align:left; font-size:16px; font-weight:800; }
+  }
+</style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="logo">القيدار <span>★</span></div>
-  <ul class="nav-links">
-    <li><a href="#services">خدماتنا</a></li>
-    <li><a href="#why">لماذا نحن</a></li>
-    <li><a href="#contact">تواصل معنا</a></li>
-  </ul>
-  <a href="#contact" class="btn-primary" style="font-size:0.85rem;padding:0.6rem 1.4rem;">احجز موعد</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">متخصصون في مرسيدس بنز</div>
-  <h1>القيدار<br/><span>للبرمجة وفحص مرسيدس</span></h1>
-  <p>خبرة احترافية في تشخيص وبرمجة وصيانة سيارات مرسيدس بنز بأحدث الأجهزة والتقنيات</p>
-  <div class="hero-cta">
-    <a href="#contact" class="btn-primary">احجز موعدك الآن</a>
-    <a href="#services" class="btn-outline">تعرف على خدماتنا</a>
-  </div>
-  <div class="star-line"><span>✦</span></div>
-</section>
-
-<!-- STATS -->
-<div class="stats">
-  <div class="stat">
-    <div class="stat-num">+500</div>
-    <div class="stat-label">سيارة تم فحصها</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">+10</div>
-    <div class="stat-label">سنوات خبرة</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">%98</div>
-    <div class="stat-label">رضا العملاء</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">24</div>
-    <div class="stat-label">ساعة دعم فني</div>
+<!-- ============ PASSWORD GATE ============ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">HARKAT</div>
+    <div class="gate-sub">نظام الفواتير الداخلي — لأصحاب الشركة فقط</div>
+    <input type="password" id="pwInput" placeholder="أدخل كلمة السر" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button onclick="checkPassword()">دخول</button>
+    <div id="gate-error"></div>
   </div>
 </div>
 
-<!-- SERVICES -->
-<section id="services">
-  <div class="services-header">
-    <div class="section-tag">خدماتنا</div>
-    <h2 class="section-title">ماذا نقدم لك؟</h2>
-    <p class="section-desc">نوفر حلولاً متكاملة لسيارات مرسيدس بنز بمعايير عالمية</p>
-  </div>
-  <div class="services-grid">
-    <div class="service-card">
-      <div class="service-icon">🔌</div>
-      <h3>برمجة الوحدات الإلكترونية</h3>
-      <p>برمجة وتحديث جميع الوحدات الإلكترونية (ECU) بأحدث الإصدارات باستخدام برامج مرسيدس الأصلية.</p>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">🔍</div>
-      <h3>الفحص الشامل</h3>
-      <p>فحص دقيق لجميع أنظمة السيارة وقراءة الأعطال وتقديم تقرير مفصل بالحالة الكاملة.</p>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">🗝️</div>
-      <h3>برمجة المفاتيح والريموت</h3>
-      <p>برمجة المفاتيح الذكية وريموتات التحكم لجميع موديلات مرسيدس بنز.</p>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">💡</div>
-      <h3>إطفاء الأعطال</h3>
-      <p>تشخيص وإزالة أكواد الأعطال والمصابيح التحذيرية من جميع أجهزة التحكم.</p>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">⚙️</div>
-      <h3>ترميز وضبط الأنظمة</h3>
-      <p>ترميز وضبط خيارات السيارة كالكاميرات وأنظمة الأمان والراحة وفق تفضيلاتك.</p>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">📊</div>
-      <h3>فحص ما قبل الشراء</h3>
-      <p>فحص احترافي وشامل لسيارة مرسيدس قبل شرائها لضمان سلامتك وحقك.</p>
-    </div>
-  </div>
-</section>
-
-<!-- WHY US -->
-<section style="padding: 6rem 5%;">
-  <div id="why">
-    <div>
-      <div class="section-tag">لماذا نحن</div>
-      <h2 class="section-title">الثقة والاحترافية في كل تفصيل</h2>
-      <p class="section-desc">نضع ثقتك فوق كل اعتبار، ونعمل بشفافية تامة مع كل عميل.</p>
-      <ul class="points">
-        <li>متخصصون حصراً في سيارات مرسيدس بنز بخبرة عميقة</li>
-        <li>أجهزة تشخيص أصلية من مرسيدس (Xentry / Das)</li>
-        <li>تقارير مفصلة وشفافية كاملة في كل خطوة</li>
-        <li>أسعار تنافسية مع ضمان على جميع الأعمال</li>
-        <li>دعم فني متواصل ما بعد الخدمة</li>
-      </ul>
-    </div>
-    <div class="why-visual">
-      <div class="mb-logo">★</div>
-      <p style="font-size:1.1rem;font-weight:700;color:var(--silver-light);margin-bottom:0.4rem;">مرسيدس بنز</p>
-      <p>نتعامل مع أفضل العلامات التجارية باحترافية لا تُضاهى</p>
-      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08);">
-        <div style="color:var(--gold-light);font-size:1.4rem;font-weight:900;">Xentry · DAS</div>
-        <div style="color:var(--text-muted);font-size:0.8rem;margin-top:0.3rem;">أجهزة الفحص الرسمية</div>
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">H</div>
+      <div class="brand-text">
+        <b>شركة هركت — HARKAT</b>
+        <span>Automotive Parts Agent · نظام الفواتير</span>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-inner">
-    <div class="section-tag" style="text-align:center;">تواصل معنا</div>
-    <h2 class="section-title">نحن هنا لمساعدتك</h2>
-    <p class="section-desc">تواصل معنا لحجز موعدك أو للاستفسار عن أي شيء يتعلق بسيارتك</p>
-    <div class="contact-grid">
-      <a class="contact-card" href="tel:+9647XXXXXXXX">
-        <div class="icon">📞</div>
-        <div class="label">اتصل بنا</div>
-        <div class="value">+964 7XX XXX XXXX</div>
-      </a>
-      <a class="contact-card" href="https://wa.me/9647XXXXXXXX" target="_blank">
-        <div class="icon">💬</div>
-        <div class="label">واتساب</div>
-        <div class="value">تحدث معنا مباشرة</div>
-      </a>
-      <a class="contact-card" href="#">
-        <div class="icon">📍</div>
-        <div class="label">الموقع</div>
-        <div class="value">أضف عنوانك هنا</div>
-      </a>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabNewBtn" onclick="showView('new')">＋ وصل جديد</button>
+      <button class="tab-btn" id="tabAllBtn" onclick="showView('all')">📋 عرض الكل</button>
     </div>
-    <a href="https://wa.me/9647XXXXXXXX" target="_blank" class="btn-primary" style="font-size:1.05rem;padding:1rem 3rem;">
-      احجز موعدك عبر واتساب
-    </a>
+  </header>
+
+  <main>
+    <!-- ===== NEW RECEIPT VIEW ===== -->
+    <div class="view active" id="view-new">
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">بيانات الزبون <span class="chip">وصل جديد</span></div>
+          <div class="grid3">
+            <div class="field"><label>اسم الزبون *</label><input type="text" id="custName" placeholder="مثال: أحمد عباس علي"></div>
+            <div class="field"><label>عنوان الزبون</label><input type="text" id="custAddress" placeholder="مثال: صناعية كوكجليل، الموصل"></div>
+            <div class="field"><label>رقم الهاتف</label><input type="tel" id="custPhone" placeholder="اختياري"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>تاريخ الفاتورة *</label><input type="date" id="invDate"></div>
+            <div class="field"><label>رقم الفاتورة</label><input type="text" id="invNo" placeholder="يُعطى تلقائياً عند الحفظ" disabled></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">المنتجات</div>
+          <table class="items">
+            <thead>
+              <tr>
+                <th style="width:26%">اسم المادة</th>
+                <th style="width:18%">الماركة</th>
+                <th style="width:12%">الكمية</th>
+                <th style="width:16%">سعر الوحدة</th>
+                <th style="width:18%">المجموع</th>
+                <th style="width:6%"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody"></tbody>
+          </table>
+          <button class="add-row-btn" onclick="addItemRow()">＋ إضافة مادة</button>
+
+          <div class="totals">
+            <div class="totals-box">
+              <div class="totals-row"><span>عدد المواد</span><span class="num" id="itemCount">0</span></div>
+              <div class="field" style="margin-top:8px;">
+                <label>المبلغ المدفوع (اختياري)</label>
+                <input type="number" id="paidAmount" value="0" min="0" oninput="recalcGrandTotal()">
+              </div>
+              <div class="totals-row"><span>المتبقي</span><span class="num" id="remainAmount">0.00</span></div>
+              <div class="totals-row grand"><span>الإجمالي الكلي</span><span class="num" id="grandTotal">0.00</span></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" onclick="saveReceipt()">💾 حفظ الوصل</button>
+            <button class="btn btn-outline" onclick="printCurrentForm()">🖨️ طباعة</button>
+            <button class="btn btn-ghost" onclick="newReceipt(true)">🔄 وصل جديد</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ALL RECEIPTS VIEW ===== -->
+    <div class="view" id="view-all">
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">كل الوصولات <span class="chip" id="totalCountChip">0</span></div>
+          <div class="toolbar">
+            <div class="search-wrap">
+              <input type="text" id="searchInput" placeholder="ابحث باسم الزبون..." oninput="renderList()">
+              <span class="icon">🔍</span>
+            </div>
+            <button class="btn btn-outline" onclick="loadAllReceipts()">↻ تحديث البيانات</button>
+            <button class="btn btn-danger" onclick="deleteAllReceipts()">🗑️ حذف الكل</button>
+          </div>
+          <div id="listWrap"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== PRINT TEMPLATE ===== -->
+<div id="printArea">
+  <div class="p-head">
+    <div class="p-brand"><b>شركة هركت — HARKAT</b><span>Automotive Parts Agent</span></div>
+    <div class="p-tag">فاتورة مبيعات</div>
   </div>
-</section>
+  <div class="p-meta">
+    <div>
+      <div><b>اسم الزبون:</b> <span id="pCustName"></span></div>
+      <div><b>عنوان الزبون:</b> <span id="pCustAddress"></span></div>
+      <div><b>رقم الهاتف:</b> <span id="pCustPhone"></span></div>
+    </div>
+    <div>
+      <div><b>رقم الفاتورة:</b> <span id="pInvNo"></span></div>
+      <div><b>تاريخ الفاتورة:</b> <span id="pInvDate"></span></div>
+    </div>
+  </div>
+  <table class="p-items">
+    <thead><tr><th>اسم المادة</th><th>الماركة</th><th>الكمية</th><th>سعر الوحدة</th><th>المجموع</th></tr></thead>
+    <tbody id="pItemsBody"></tbody>
+  </table>
+  <div class="p-grand">
+    <div>المبلغ المدفوع: <span id="pPaid"></span></div>
+    <div>المتبقي: <span id="pRemain"></span></div>
+    <div>الإجمالي الكلي: <span id="pGrand"></span></div>
+  </div>
+</div>
 
-<!-- FOOTER -->
-<footer>
-  <p>© 2026 <span>القيدار</span> لبرمجة وفحص مرسيدس — جميع الحقوق محفوظة</p>
-  <p style="font-size:0.8rem;">متخصصون في مرسيدس بنز ✦</p>
-</footer>
+<!-- ============ FIREBASE ============ -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script>
+  // ---------------- FIREBASE CONFIG ----------------
+  const firebaseConfig = {
+    apiKey: "AIzaSyBQmOTmCfrBGwQNRrlGSZ6dU_6su-sR2oU",
+    authDomain: "ali-alsoltan.firebaseapp.com",
+    projectId: "ali-alsoltan",
+    storageBucket: "ali-alsoltan.firebasestorage.app",
+    messagingSenderId: "899045671707",
+    appId: "1:899045671707:web:e6039045cd6d1b7f2909be"
+  };
+  let db = null;
+  let receiptsRef = null;
+  let firebaseReady = false;
+  try{
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    receiptsRef = db.collection("receipts");
+    firebaseReady = true;
+  }catch(err){
+    console.error('Firebase init failed:', err);
+  }
 
+  // ---------------- PASSWORD GATE ----------------
+  // غيّر كلمة السر هنا فقط:
+  const SITE_PASSWORD = "20261111";
+
+  function checkPassword(){
+    const val = document.getElementById('pwInput').value;
+    if(val !== SITE_PASSWORD){
+      document.getElementById('gate-error').textContent = 'كلمة السر غير صحيحة';
+      document.getElementById('pwInput').value = '';
+      return;
+    }
+    if(!firebaseReady){
+      document.getElementById('gate-error').textContent =
+        'تعذر الاتصال بقاعدة البيانات. تأكد من الإنترنت، ومن أنك تفتح الموقع من رابطه الحقيقي (GitHub Pages) وليس من معاينة الدردشة.';
+      return;
+    }
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    newReceipt(false);
+    loadAllReceipts();
+  }
+
+  // ---------------- TABS ----------------
+  function showView(name){
+    document.getElementById('view-new').classList.toggle('active', name === 'new');
+    document.getElementById('view-all').classList.toggle('active', name === 'all');
+    document.getElementById('tabNewBtn').classList.toggle('active', name === 'new');
+    document.getElementById('tabAllBtn').classList.toggle('active', name === 'all');
+    if(name === 'all') loadAllReceipts();
+  }
+
+  // ---------------- TOAST ----------------
+  function toast(msg, type){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + (type || '');
+    setTimeout(()=>{ t.className = 'toast'; }, 2600);
+  }
+
+  // ---------------- ITEMS TABLE ----------------
+  let itemRowId = 0;
+  function addItemRow(){
+    itemRowId++;
+    const id = itemRowId;
+    const tr = document.createElement('tr');
+    tr.id = 'row-' + id;
+    tr.innerHTML = `
+      <td><input type="text" id="name-${id}" placeholder="اسم المادة"></td>
+      <td><input type="text" id="brand-${id}" placeholder="الماركة"></td>
+      <td><input type="number" id="qty-${id}" value="1" min="0" oninput="recalcRow(${id})"></td>
+      <td><input type="number" id="price-${id}" value="0" min="0" oninput="recalcRow(${id})"></td>
+      <td class="row-total num" id="total-${id}">0.00</td>
+      <td><button class="del-row" onclick="removeItemRow(${id})">×</button></td>
+    `;
+    document.getElementById('itemsBody').appendChild(tr);
+    recalcGrandTotal();
+  }
+  function removeItemRow(id){
+    const row = document.getElementById('row-' + id);
+    if(row) row.remove();
+    recalcGrandTotal();
+  }
+  function recalcRow(id){
+    const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
+    const price = parseFloat(document.getElementById('price-' + id).value) || 0;
+    document.getElementById('total-' + id).textContent = (qty * price).toFixed(2);
+    recalcGrandTotal();
+  }
+  function recalcGrandTotal(){
+    const rows = document.querySelectorAll('#itemsBody tr');
+    let grand = 0;
+    rows.forEach(r=>{
+      const id = r.id.split('-')[1];
+      const totalEl = document.getElementById('total-' + id);
+      if(totalEl) grand += parseFloat(totalEl.textContent) || 0;
+    });
+    document.getElementById('itemCount').textContent = rows.length;
+    document.getElementById('grandTotal').textContent = grand.toFixed(2);
+    const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
+    document.getElementById('remainAmount').textContent = (grand - paid).toFixed(2);
+    return grand;
+  }
+
+  function collectItems(){
+    const rows = document.querySelectorAll('#itemsBody tr');
+    const items = [];
+    rows.forEach(r=>{
+      const id = r.id.split('-')[1];
+      const name = document.getElementById('name-' + id).value.trim();
+      const brand = document.getElementById('brand-' + id).value.trim();
+      const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
+      const price = parseFloat(document.getElementById('price-' + id).value) || 0;
+      if(name){
+        items.push({ name, brand, qty, price, total: qty * price });
+      }
+    });
+    return items;
+  }
+
+  // ---------------- NEW RECEIPT ----------------
+  function newReceipt(showToast){
+    document.getElementById('custName').value = '';
+    document.getElementById('custAddress').value = '';
+    document.getElementById('custPhone').value = '';
+    document.getElementById('invDate').value = '';
+    document.getElementById('invNo').value = '';
+    document.getElementById('paidAmount').value = 0;
+    document.getElementById('itemsBody').innerHTML = '';
+    addItemRow();
+    if(showToast) toast('تم فتح وصل جديد', 'success');
+  }
+
+  // ---------------- SAVE ----------------
+  async function saveReceipt(){
+    const custName = document.getElementById('custName').value.trim();
+    const custAddress = document.getElementById('custAddress').value.trim();
+    const custPhone = document.getElementById('custPhone').value.trim();
+    const invDate = document.getElementById('invDate').value;
+    const items = collectItems();
+    const grand = recalcGrandTotal();
+    const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
+
+    if(!custName){ toast('الرجاء إدخال اسم الزبون', 'error'); return; }
+    if(!invDate){ toast('الرجاء اختيار تاريخ الفاتورة', 'error'); return; }
+    if(items.length === 0){ toast('أضف مادة واحدة على الأقل', 'error'); return; }
+
+    try{
+      const countSnap = await receiptsRef.get();
+      const receiptNo = String(countSnap.size + 1).padStart(6, '0');
+
+      await receiptsRef.add({
+        receiptNo,
+        customerName: custName,
+        customerAddress: custAddress,
+        customerPhone: custPhone,
+        invoiceDate: invDate,
+        items,
+        grandTotal: grand,
+        paidAmount: paid,
+        remainAmount: grand - paid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      document.getElementById('invNo').value = receiptNo;
+      toast('تم حفظ الوصل رقم ' + receiptNo + ' بنجاح', 'success');
+      loadAllReceipts();
+    }catch(err){
+      console.error(err);
+      toast('حدث خطأ أثناء الحفظ', 'error');
+    }
+  }
+
+  // ---------------- LOAD / LIST ----------------
+  let allReceipts = [];
+  async function loadAllReceipts(){
+    const wrap = document.getElementById('listWrap');
+    wrap.innerHTML = '<div class="empty-state">جارِ التحميل...</div>';
+    try{
+      const snap = await receiptsRef.orderBy('createdAt', 'desc').get();
+      allReceipts = [];
+      snap.forEach(doc=> allReceipts.push({ id: doc.id, ...doc.data() }));
+      document.getElementById('totalCountChip').textContent = allReceipts.length;
+      renderList();
+    }catch(err){
+      console.error(err);
+      wrap.innerHTML = '<div class="empty-state">تعذر تحميل البيانات، تحقق من الاتصال</div>';
+    }
+  }
+
+  function renderList(){
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const wrap = document.getElementById('listWrap');
+    const filtered = query
+      ? allReceipts.filter(r => (r.customerName || '').toLowerCase().includes(query))
+      : allReceipts;
+
+    if(filtered.length === 0){
+      wrap.innerHTML = '<div class="empty-state"><div class="big">📭</div>لا توجد وصولات مطابقة</div>';
+      return;
+    }
+
+    let html = `<table class="list"><thead><tr>
+      <th>رقم الفاتورة</th><th>التاريخ</th><th>اسم الزبون</th><th>عدد المواد</th><th>الإجمالي</th><th>إجراءات</th>
+    </tr></thead><tbody>`;
+    filtered.forEach(r=>{
+      html += `<tr>
+        <td class="num">${r.receiptNo || '-'}</td>
+        <td>${r.invoiceDate || '-'}</td>
+        <td>${r.customerName || '-'}</td>
+        <td>${(r.items || []).length}</td>
+        <td class="num">${(r.grandTotal || 0).toFixed(2)}</td>
+        <td>
+          <button class="mini-btn mini-print" onclick="printSaved('${r.id}')">🖨️ طباعة</button>
+          <button class="mini-btn mini-del" onclick="deleteReceipt('${r.id}')">🗑️ حذف</button>
+        </td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+
+  // ---------------- DELETE ----------------
+  async function deleteReceipt(id){
+    if(!confirm('هل أنت متأكد من حذف هذا الوصل؟')) return;
+    try{
+      await receiptsRef.doc(id).delete();
+      toast('تم حذف الوصل', 'success');
+      loadAllReceipts();
+    }catch(err){
+      console.error(err);
+      toast('تعذر حذف الوصل', 'error');
+    }
+  }
+
+  async function deleteAllReceipts(){
+    if(!confirm('سيتم حذف جميع الوصولات نهائياً. هل أنت متأكد؟')) return;
+    if(!confirm('تأكيد أخير: هذا الإجراء لا يمكن التراجع عنه. متابعة؟')) return;
+    try{
+      const snap = await receiptsRef.get();
+      const batch = db.batch();
+      snap.forEach(doc => batch.delete(doc.ref));
+      await batch.commit();
+      toast('تم حذف جميع الوصولات', 'success');
+      loadAllReceipts();
+    }catch(err){
+      console.error(err);
+      toast('تعذر حذف البيانات', 'error');
+    }
+  }
+
+  // ---------------- PRINT ----------------
+  function fillPrintArea(data){
+    document.getElementById('pCustName').textContent = data.customerName || '-';
+    document.getElementById('pCustAddress').textContent = data.customerAddress || '-';
+    document.getElementById('pCustPhone').textContent = data.customerPhone || '-';
+    document.getElementById('pInvNo').textContent = data.receiptNo || '(لم يُحفظ بعد)';
+    document.getElementById('pInvDate').textContent = data.invoiceDate || '-';
+    const body = document.getElementById('pItemsBody');
+    body.innerHTML = '';
+    (data.items || []).forEach(it=>{
+      body.innerHTML += `<tr>
+        <td>${it.name}</td><td>${it.brand || '-'}</td><td>${it.qty}</td>
+        <td>${Number(it.price).toFixed(2)}</td><td>${Number(it.total).toFixed(2)}</td>
+      </tr>`;
+    });
+    document.getElementById('pPaid').textContent = Number(data.paidAmount || 0).toFixed(2);
+    document.getElementById('pRemain').textContent = Number(data.remainAmount || (data.grandTotal - (data.paidAmount||0))).toFixed(2);
+    document.getElementById('pGrand').textContent = Number(data.grandTotal || 0).toFixed(2);
+  }
+
+  function printCurrentForm(){
+    const items = collectItems();
+    if(items.length === 0){ toast('أضف مادة واحدة على الأقل قبل الطباعة', 'error'); return; }
+    const grand = recalcGrandTotal();
+    const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
+    fillPrintArea({
+      customerName: document.getElementById('custName').value,
+      customerAddress: document.getElementById('custAddress').value,
+      customerPhone: document.getElementById('custPhone').value,
+      receiptNo: document.getElementById('invNo').value,
+      invoiceDate: document.getElementById('invDate').value,
+      items, grandTotal: grand, paidAmount: paid, remainAmount: grand - paid
+    });
+    window.print();
+  }
+
+  function printSaved(id){
+    const data = allReceipts.find(r => r.id === id);
+    if(!data) return;
+    fillPrintArea(data);
+    window.print();
+  }
+</script>
 </body>
 </html>
