@@ -248,7 +248,7 @@
 
       <div class="totals">
         <div class="totals-box">
-          <div class="t-row"><span>المبلغ المدفوع</span><input type="number" id="paidAmount" value="0" min="0" oninput="recalcGrandTotal()"></div>
+          <div class="t-row"><span>المبلغ المدفوع</span><input type="number" id="paidAmount" placeholder="0" min="0" oninput="recalcGrandTotal()"></div>
           <div class="t-row"><span>المتبقي</span><span class="num" id="remainAmount">0.00</span></div>
           <div class="t-grand"><span>المجموع Total</span><span class="num" id="grandTotal">0.00</span></div>
         </div>
@@ -420,8 +420,10 @@
     });
   }
   function recalcRow(id){
-    const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
-    const price = parseFloat(document.getElementById('price-' + id).value) || 0;
+    const qtyRaw = document.getElementById('qty-' + id).value;
+    const priceRaw = document.getElementById('price-' + id).value;
+    const qty = qtyRaw === '' ? 1 : (parseFloat(qtyRaw) || 0);
+    const price = priceRaw === '' ? 0 : (parseFloat(priceRaw) || 0);
     document.getElementById('total-' + id).textContent = Math.round(qty * price);
     recalcGrandTotal();
   }
@@ -445,8 +447,10 @@
     rows.forEach(r=>{
       const id = r.id.split('-')[1];
       const name = document.getElementById('name-' + id).value.trim();
-      const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
-      const price = parseFloat(document.getElementById('price-' + id).value) || 0;
+      const qtyRaw = document.getElementById('qty-' + id).value;
+      const priceRaw = document.getElementById('price-' + id).value;
+      const qty = qtyRaw === '' ? 1 : (parseFloat(qtyRaw) || 0);
+      const price = priceRaw === '' ? 0 : (parseFloat(priceRaw) || 0);
       if(name){ items.push({ name, qty, price, total: qty * price }); }
     });
     return items;
@@ -461,7 +465,7 @@
     document.getElementById('custPhone').value = '';
     document.getElementById('invDate').value = '';
     document.getElementById('invNo').textContent = '—';
-    document.getElementById('paidAmount').value = 0;
+    document.getElementById('paidAmount').value = '';
     document.getElementById('itemsBody').innerHTML = '';
     itemRowId = 0;
     for(let i = 0; i < 5; i++){ addItemRow(); }
