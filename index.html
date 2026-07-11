@@ -159,6 +159,7 @@
   table.list td{ padding:9px 6px; border-bottom:1px solid var(--line); text-align:center; font-size:13px; }
   .mini-btn{ border:none; border-radius:7px; padding:6px 10px; font-family:inherit; font-weight:700; font-size:11.5px; cursor:pointer; margin:0 2px; }
   .mini-print{ background:var(--orange-tint); color:var(--orange-dark); }
+  .mini-open{ background:var(--green-tint); color:var(--green); }
   .mini-del{ background:var(--red-tint); color:var(--red); }
   .empty-state{ text-align:center; padding:40px 10px; color:var(--ink-soft); font-size:13.5px; }
   .empty-state .big{ font-size:34px; margin-bottom:8px; }
@@ -386,18 +387,22 @@
 
   // ---------------- ITEMS TABLE ----------------
   let itemRowId = 0;
-  function addItemRow(){
+  function addItemRow(prefill){
     itemRowId++;
     const id = itemRowId;
+    const p = prefill || {};
+    const pName = p.name ? p.name.replace(/"/g,'&quot;') : '';
+    const pQty = (p.qty !== undefined) ? p.qty : 1;
+    const pPrice = (p.price !== undefined) ? p.price : 0;
     const tr = document.createElement('tr');
     tr.id = 'row-' + id;
     const rowNum = document.querySelectorAll('#itemsBody tr').length + 1;
     tr.innerHTML = `
       <td class="num">${rowNum}</td>
-      <td><input type="text" id="name-${id}" placeholder="اسم المادة"></td>
-      <td><input type="number" id="qty-${id}" value="1" min="0" oninput="recalcRow(${id})"></td>
-      <td><input type="number" id="price-${id}" value="0" min="0" oninput="recalcRow(${id})"></td>
-      <td class="row-total num" id="total-${id}">0.00</td>
+      <td><input type="text" id="name-${id}" placeholder="اسم المادة" value="${pName}"></td>
+      <td><input type="number" id="qty-${id}" value="${pQty}" min="0" oninput="recalcRow(${id})"></td>
+      <td><input type="number" id="price-${id}" value="${pPrice}" min="0" oninput="recalcRow(${id})"></td>
+      <td class="row-total num" id="total-${id}">${(pQty*pPrice).toFixed(2)}</td>
       <td><button class="del-row" onclick="removeItemRow(${id})">×</button></td>
     `;
     document.getElementById('itemsBody').appendChild(tr);
@@ -448,7 +453,9 @@
   }
 
   // ---------------- NEW RECEIPT ----------------
+  let editingId = null;
   function newReceipt(showToast){
+    editingId = null;
     document.getElementById('custName').value = '';
     document.getElementById('custAddress').value = '';
     document.getElementById('custPhone').value = '';
@@ -457,7 +464,7 @@
     document.getElementById('paidAmount').value = 0;
     document.getElementById('itemsBody').innerHTML = '';
     itemRowId = 0;
-    addItemRow();
+    for(let i = 0; i < 5; i++){ addItemRow(); }
     if(showToast) toast('تم فتح وصل جديد', 'success');
   }
 
@@ -476,6 +483,22 @@
     if(items.length === 0){ toast('أضف مادة واحدة على الأقل', 'error'); return; }
 
     try{
+      if(editingId){
+        await receiptsRef.doc(editingId).update({
+          customerName: custName,
+          customerAddress: custAddress,
+          customerPhone: custPhone,
+          invoiceDate: invDate,
+          items,
+          grandTotal: grand,
+          paidAmount: paid,
+          remainAmount: grand - paid
+        });
+        toast('تم تحديث الوصل بنجاح', 'success');
+        loadAllReceipts();
+        return;
+      }
+
       const countSnap = await receiptsRef.get();
       const receiptNo = String(countSnap.size + 1).padStart(6, '0');
 
@@ -542,6 +565,7 @@
         <td>${(r.items || []).length}</td>
         <td class="num">${(r.grandTotal || 0).toFixed(2)}</td>
         <td>
+          <button class="mini-btn mini-open" onclick="openReceipt('${r.id}')">📂 فتح</button>
           <button class="mini-btn mini-print" onclick="printSaved('${r.id}')">🖨️ طباعة</button>
           <button class="mini-btn mini-del" onclick="deleteReceipt('${r.id}')">🗑️ حذف</button>
         </td>
@@ -549,6 +573,30 @@
     });
     html += '</tbody></table>';
     wrap.innerHTML = html;
+  }
+
+  function openReceipt(id){
+    const data = allReceipts.find(r => r.id === id);
+    if(!data) return;
+    editingId = id;
+    document.getElementById('custName').value = data.customerName || '';
+    document.getElementById('custAddress').value = data.customerAddress || '';
+    document.getElementById('custPhone').value = data.customerPhone || '';
+    document.getElementById('invDate').value = data.invoiceDate || '';
+    document.getElementById('invNo').textContent = data.receiptNo || '—';
+    document.getElementById('paidAmount').value = data.paidAmount || 0;
+    document.getElementById('itemsBody').innerHTML = '';
+    itemRowId = 0;
+    const items = data.items || [];
+    if(items.length === 0){
+      for(let i = 0; i < 5; i++){ addItemRow(); }
+    }else{
+      items.forEach(it => addItemRow({ name: it.name, qty: it.qty, price: it.price }));
+    }
+    recalcGrandTotal();
+    closePanel();
+    toast('تم فتح الوصل رقم ' + (data.receiptNo || '') + ' — يمكنك التعديل والحفظ', 'success');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ---------------- DELETE ----------------
