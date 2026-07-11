@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>هركت | نظام الفواتير</title>
+<title>شركة فاضل عباس | نظام الفواتير</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#F7F3EA;
     --paper:#FFFFFF;
-    --ink:#292A2E;
-    --ink-soft:#767A81;
+    --ink:#000000;
+    --ink-soft:#000000;
     --line:#E4DCC8;
     --navy:#1E2A38;
     --navy-soft:#2E3F52;
@@ -40,18 +40,18 @@
   }
   .gate-card::before{ content:""; position:absolute; top:0; right:0; width:50px; height:50px; background:var(--orange); border-radius:0 0 0 16px; }
   .gate-logo{ font-weight:800; font-size:24px; color:var(--navy); }
-  .gate-sub{ color:var(--ink-soft); font-size:12.5px; margin:4px 0 22px; }
+  .gate-sub{ color:var(--ink-soft); font-size:18px; margin:4px 0 22px; }
   #gate input{
     width:100%; padding:12px 14px; border-radius:9px; border:1px solid var(--line);
-    background:var(--bg); font-family:inherit; font-size:14.5px; text-align:center; outline:none;
+    background:var(--bg); font-family:inherit; font-size:20px; text-align:center; outline:none;
   }
   #gate input:focus{ border-color:var(--orange); background:#fff; }
   #gate button{
     width:100%; margin-top:13px; padding:12px; border:none; border-radius:9px;
-    background:var(--navy); color:#fff; font-family:inherit; font-weight:700; font-size:14.5px; cursor:pointer;
+    background:var(--navy); color:#fff; font-family:inherit; font-weight:700; font-size:20px; cursor:pointer;
   }
   #gate button:hover{ background:var(--navy-soft); }
-  #gate-error{ color:var(--red); font-size:12.5px; margin-top:10px; min-height:16px; }
+  #gate-error{ color:var(--red); font-size:18px; margin-top:10px; min-height:16px; }
 
   /* ---------- App ---------- */
   #app{ display:none; }
@@ -67,18 +67,23 @@
   .letterhead::after{ content:""; position:absolute; bottom:0; right:0; left:0; height:5px; background:var(--orange); }
   .lh-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
   .lh-name{ font-size:24px; font-weight:800; }
-  .lh-tag{ font-size:12px; color:#B9C2CC; margin-top:2px; }
-  .lh-no{ text-align:left; font-size:12.5px; color:#B9C2CC; }
+  .lh-tag{ font-size:18px; color:#B9C2CC; margin-top:2px; }
+  .lh-no{ text-align:left; font-size:18px; color:#B9C2CC; margin-top:10px; }
   .lh-no b{ color:#fff; font-family:'Courier New', monospace; }
-  .lh-desc{ margin-top:14px; font-size:12.5px; line-height:1.9; color:#D8DEE4; max-width:520px; }
-  .lh-contact{ margin-top:12px; font-size:12px; color:#B9C2CC; }
+  .lh-desc{ margin-top:14px; font-size:18px; line-height:1.9; color:#D8DEE4; max-width:520px; }
+  .lh-left{ text-align:left; }
+  .lh-brand-mark{ line-height:1.15; }
+  .lh-iveco{ font-size:20px; font-weight:800; color:#fff; letter-spacing:.5px; }
+  .lh-fiat{ font-size:16px; font-weight:700; color:#D8DEE4; margin-top:1px; }
+  .lh-phones{ text-align:center; }
+  .lh-phones .num{ font-size:16px; color:#fff; line-height:1.9; display:block; }
 
   .meta{ padding:22px 26px 6px; }
   .meta-row{ display:grid; grid-template-columns:110px 1fr; align-items:center; gap:10px; margin-bottom:12px; }
-  .meta-row label{ font-size:13px; color:var(--ink-soft); font-weight:700; }
+  .meta-row label{ font-size:20px; color:var(--ink-soft); font-weight:700; }
   .meta-row input{
     padding:9px 12px; border-radius:8px; border:1px solid var(--line); background:var(--bg);
-    font-family:inherit; font-size:14px; outline:none;
+    font-family:inherit; font-size:20px; outline:none;
   }
   .meta-row input:focus{ border-color:var(--orange); background:#fff; }
   @media (max-width:520px){ .meta-row{ grid-template-columns:1fr; } }
@@ -87,25 +92,25 @@
   table.items{ width:100%; border-collapse:collapse; margin-top:6px; }
   table.items thead th{
     background:var(--bg); border-bottom:2px solid var(--line); padding:10px 6px; text-align:center;
-    font-size:12px; font-weight:800; color:var(--navy);
+    font-size:18px; font-weight:800; color:#000000;
   }
-  table.items thead th small{ display:block; font-weight:400; color:var(--ink-soft); font-size:10.5px; }
+  table.items thead th small{ display:block; font-weight:400; color:#000000; font-size:18px; }
   table.items td{ padding:7px 5px; border-bottom:1px solid var(--line); text-align:center; }
   table.items td input{
     width:100%; padding:8px 6px; border-radius:7px; border:1px solid var(--line); background:var(--bg);
-    font-family:inherit; font-size:13.5px; text-align:center; outline:none;
+    font-family:inherit; font-size:20px; text-align:center; outline:none;
   }
   table.items td input:focus{ border-color:var(--orange); background:#fff; }
-  .row-total{ font-weight:700; color:var(--navy); }
+  .row-total{ font-weight:700; color:#000000; }
   .del-row{ background:var(--red-tint); color:var(--red); border:none; width:28px; height:28px; border-radius:7px; cursor:pointer; font-weight:700; }
   .add-row-btn{
     margin:12px 0 4px; background:var(--green-tint); color:var(--green); border:1px dashed var(--green);
-    padding:8px 16px; border-radius:8px; cursor:pointer; font-family:inherit; font-weight:700; font-size:13px;
+    padding:8px 16px; border-radius:8px; cursor:pointer; font-family:inherit; font-weight:700; font-size:20px;
   }
 
   .totals{ padding:12px 26px 0; display:flex; justify-content:flex-end; }
   .totals-box{ width:260px; }
-  .t-row{ display:flex; justify-content:space-between; padding:6px 2px; font-size:13.5px; color:var(--ink-soft); }
+  .t-row{ display:flex; justify-content:space-between; padding:6px 2px; font-size:20px; color:var(--ink-soft); }
   .t-row input{ width:110px; padding:6px 8px; border-radius:7px; border:1px solid var(--line); background:var(--bg); text-align:center; font-family:'Courier New',monospace; }
   .t-grand{
     background:var(--navy); color:#fff; border-radius:9px; padding:12px 14px; font-weight:800; font-size:15px;
@@ -113,13 +118,13 @@
   }
   .t-grand .num{ color:var(--orange); font-size:17px; }
 
-  .footnote{ padding:18px 26px 0; text-align:center; font-size:12px; color:var(--ink-soft); font-style:italic; }
-  .signature{ padding:20px 26px 4px; display:flex; justify-content:flex-end; font-size:13.5px; color:var(--ink-soft); }
+  .footnote{ padding:18px 26px 0; text-align:center; font-size:18px; color:var(--ink-soft); font-style:italic; }
+  .signature{ padding:20px 26px 4px; display:flex; justify-content:flex-end; font-size:20px; color:var(--ink-soft); }
   .signature b{ color:var(--ink); margin-left:6px; }
 
   .actions{ padding:20px 26px 26px; display:flex; flex-wrap:wrap; gap:9px; border-top:1px dashed var(--line); margin-top:16px; }
   .btn{
-    padding:11px 16px; border-radius:9px; border:none; font-family:inherit; font-weight:700; font-size:13.5px;
+    padding:11px 16px; border-radius:9px; border:none; font-family:inherit; font-weight:700; font-size:20px;
     cursor:pointer; transition:.15s; display:flex; align-items:center; gap:6px;
   }
   .btn:hover{ transform:translateY(-1px); }
@@ -145,28 +150,28 @@
     background:var(--navy); color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center;
   }
   .panel-head b{ font-size:15.5px; }
-  .panel-head .chip{ background:var(--orange); border-radius:20px; padding:2px 10px; font-size:11.5px; margin-right:8px; }
+  .panel-head .chip{ background:var(--orange); border-radius:20px; padding:2px 10px; font-size:18px; margin-right:8px; }
   .panel-close{ background:rgba(255,255,255,.12); border:none; color:#fff; width:30px; height:30px; border-radius:8px; cursor:pointer; font-size:15px; }
   .panel-body{ padding:18px 22px; overflow-y:auto; }
   .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
   .search-wrap{ position:relative; flex:1; min-width:200px; }
-  .search-wrap input{ width:100%; padding:10px 34px 10px 12px; border-radius:8px; border:1px solid var(--line); background:var(--bg); font-family:inherit; font-size:13.5px; outline:none; }
+  .search-wrap input{ width:100%; padding:10px 34px 10px 12px; border-radius:8px; border:1px solid var(--line); background:var(--bg); font-family:inherit; font-size:20px; outline:none; }
   .search-wrap input:focus{ border-color:var(--orange); background:#fff; }
   .search-wrap .icon{ position:absolute; right:11px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:14px; }
 
   table.list{ width:100%; border-collapse:collapse; }
-  table.list th{ background:var(--bg); color:var(--navy); font-size:11.5px; font-weight:800; padding:9px 6px; border-bottom:2px solid var(--line); text-align:center; }
-  table.list td{ padding:9px 6px; border-bottom:1px solid var(--line); text-align:center; font-size:13px; }
-  .mini-btn{ border:none; border-radius:7px; padding:6px 10px; font-family:inherit; font-weight:700; font-size:11.5px; cursor:pointer; margin:0 2px; }
+  table.list th{ background:var(--bg); color:#000000; font-size:18px; font-weight:800; padding:9px 6px; border-bottom:2px solid var(--line); text-align:center; }
+  table.list td{ padding:9px 6px; border-bottom:1px solid var(--line); text-align:center; font-size:20px; }
+  .mini-btn{ border:none; border-radius:7px; padding:6px 10px; font-family:inherit; font-weight:700; font-size:18px; cursor:pointer; margin:0 2px; }
   .mini-print{ background:var(--orange-tint); color:var(--orange-dark); }
   .mini-open{ background:var(--green-tint); color:var(--green); }
   .mini-del{ background:var(--red-tint); color:var(--red); }
-  .empty-state{ text-align:center; padding:40px 10px; color:var(--ink-soft); font-size:13.5px; }
+  .empty-state{ text-align:center; padding:40px 10px; color:var(--ink-soft); font-size:20px; }
   .empty-state .big{ font-size:34px; margin-bottom:8px; }
 
   .toast{
     position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
-    background:var(--navy); color:#fff; padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:600;
+    background:var(--navy); color:#fff; padding:12px 20px; border-radius:10px; font-size:20px; font-weight:600;
     box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.25s; z-index:999;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
@@ -176,20 +181,26 @@
   /* ---------- Print ---------- */
   #printArea{ display:none; }
   @media print{
-    body *{ visibility:hidden; }
-    #printArea, #printArea *{ visibility:visible; }
-    #printArea{ display:block; position:absolute; top:0; right:0; left:0; padding:22px; }
+    html, body{ height:auto !important; margin:0; }
+    #gate, #app, #panelOverlay, .toast{ display:none !important; }
+    #printArea{ display:block; padding:22px; }
     .p-head{ border-bottom:3px solid #E08A2C; padding-bottom:12px; }
-    .p-head b{ font-size:20px; } .p-head span{ font-size:11px; color:#666; display:block; }
-    .p-desc{ font-size:11px; color:#555; margin-top:6px; }
-    .p-meta{ display:flex; justify-content:space-between; margin:14px 0; font-size:12.5px; }
+    .p-head-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    .p-head b{ font-size:20px; } .p-head span{ font-size:18px; color:#000000; display:block; }
+    .p-phones{ text-align:center; font-size:14px; color:#000000; }
+    .p-phones span{ display:block; }
+    .p-mark{ text-align:left; }
+    .p-iveco{ font-size:16px; font-weight:800; color:#000000; }
+    .p-fiat{ font-size:13px; font-weight:700; color:#000000; margin-top:1px; }
+    .p-desc{ font-size:18px; color:#000000; margin-top:6px; }
+    .p-meta{ display:flex; justify-content:space-between; margin:14px 0; font-size:18px; }
     .p-meta div{ line-height:1.9; }
     table.p-items{ width:100%; border-collapse:collapse; margin-top:8px; }
-    table.p-items th{ background:#1E2A38; color:#fff; padding:7px; font-size:12px; }
-    table.p-items td{ padding:7px; border-bottom:1px solid #ddd; text-align:center; font-size:12px; }
+    table.p-items th{ background:#1E2A38; color:#fff; padding:7px; font-size:18px; }
+    table.p-items td{ padding:7px; border-bottom:1px solid #ddd; text-align:center; font-size:18px; }
     .p-grand{ margin-top:14px; text-align:left; font-size:15px; font-weight:800; }
-    .p-foot{ margin-top:22px; text-align:center; font-size:11px; font-style:italic; color:#666; }
-    .p-sign{ margin-top:26px; text-align:left; font-size:12.5px; }
+    .p-foot{ margin-top:22px; text-align:center; font-size:18px; font-style:italic; color:#000000; }
+    .p-sign{ margin-top:26px; text-align:left; font-size:18px; }
   }
 </style>
 </head>
@@ -198,7 +209,7 @@
 <!-- ============ PASSWORD GATE ============ -->
 <div id="gate">
   <div class="gate-card">
-    <div class="gate-logo">HARKAT</div>
+    <div class="gate-logo">شركة فاضل عباس</div>
     <div class="gate-sub">هذا الموقع خاص بأصحاب الشركة فقط</div>
     <input type="password" id="pwInput" placeholder="أدخل كلمة السر" onkeydown="if(event.key==='Enter')checkPassword()">
     <button onclick="checkPassword()">دخول</button>
@@ -213,13 +224,22 @@
       <div class="letterhead">
         <div class="lh-top">
           <div>
-            <div class="lh-name">شركة هركت — HARKAT</div>
+            <div class="lh-name">شركة فاضل عباس</div>
             <div class="lh-tag">Automotive Parts Agent · وكيل قطع غيار سيارات</div>
           </div>
-          <div class="lh-no">رقم الفاتورة No.<br><b id="invNo">—</b></div>
+          <div class="lh-phones">
+            <span class="num">07705222512</span>
+            <span class="num">07518072215</span>
+          </div>
+          <div class="lh-left">
+            <div class="lh-brand-mark">
+              <div class="lh-iveco">IVECO</div>
+              <div class="lh-fiat">FIAT</div>
+            </div>
+            <div class="lh-no">رقم الفاتورة No.<br><b id="invNo">—</b></div>
+          </div>
         </div>
-        <div class="lh-desc">لبيع قطع غيار السيارات الأصلية والتجارية بأفضل الأسعار، مع خدمة توريد وتوصيل سريعة لكافة الماركات.</div>
-        <div class="lh-contact">الموصل، العراق &nbsp;|&nbsp; للتواصل: ضع رقم الهاتف هنا</div>
+        <div class="lh-desc">لبيع الأدوات الاحتياطية لمحركات الديزل الإيطالية والألمانية</div>
       </div>
 
       <div class="meta">
@@ -293,8 +313,12 @@
 <!-- ===== PRINT TEMPLATE ===== -->
 <div id="printArea">
   <div class="p-head">
-    <b>شركة هركت — HARKAT</b><span>Automotive Parts Agent</span>
-    <div class="p-desc">لبيع قطع غيار السيارات الأصلية والتجارية | الموصل، العراق</div>
+    <div class="p-head-top">
+      <div class="p-brand"><b>شركة فاضل عباس</b><span>Automotive Parts Agent</span></div>
+      <div class="p-phones"><span>07705222512</span><span>07518072215</span></div>
+      <div class="p-mark"><div class="p-iveco">IVECO</div><div class="p-fiat">FIAT</div></div>
+    </div>
+    <div class="p-desc">لبيع الأدوات الاحتياطية لمحركات الديزل الإيطالية والألمانية</div>
   </div>
   <div class="p-meta">
     <div>
