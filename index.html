@@ -348,7 +348,7 @@
 
   // ---------------- PASSWORD GATE ----------------
   // غيّر كلمة السر هنا فقط:
-  const SITE_PASSWORD = "20261111";
+  const SITE_PASSWORD = "harkat2026";
 
   function checkPassword(){
     const val = document.getElementById('pwInput').value;
@@ -392,17 +392,17 @@
     const id = itemRowId;
     const p = prefill || {};
     const pName = p.name ? p.name.replace(/"/g,'&quot;') : '';
-    const pQty = (p.qty !== undefined) ? p.qty : 1;
-    const pPrice = (p.price !== undefined) ? p.price : 0;
+    const pQty = (p.qty !== undefined) ? p.qty : '';
+    const pPrice = (p.price !== undefined) ? p.price : '';
     const tr = document.createElement('tr');
     tr.id = 'row-' + id;
     const rowNum = document.querySelectorAll('#itemsBody tr').length + 1;
     tr.innerHTML = `
       <td class="num">${rowNum}</td>
       <td><input type="text" id="name-${id}" placeholder="اسم المادة" value="${pName}"></td>
-      <td><input type="number" id="qty-${id}" value="${pQty}" min="0" oninput="recalcRow(${id})"></td>
-      <td><input type="number" id="price-${id}" value="${pPrice}" min="0" oninput="recalcRow(${id})"></td>
-      <td class="row-total num" id="total-${id}">${(pQty*pPrice).toFixed(2)}</td>
+      <td><input type="number" id="qty-${id}" placeholder="1" value="${pQty}" min="0" oninput="recalcRow(${id})"></td>
+      <td><input type="number" id="price-${id}" placeholder="0" value="${pPrice}" min="0" oninput="recalcRow(${id})"></td>
+      <td class="row-total num" id="total-${id}">0</td>
       <td><button class="del-row" onclick="removeItemRow(${id})">×</button></td>
     `;
     document.getElementById('itemsBody').appendChild(tr);
@@ -422,7 +422,7 @@
   function recalcRow(id){
     const qty = parseFloat(document.getElementById('qty-' + id).value) || 0;
     const price = parseFloat(document.getElementById('price-' + id).value) || 0;
-    document.getElementById('total-' + id).textContent = (qty * price).toFixed(2);
+    document.getElementById('total-' + id).textContent = Math.round(qty * price);
     recalcGrandTotal();
   }
   function recalcGrandTotal(){
@@ -433,9 +433,9 @@
       const totalEl = document.getElementById('total-' + id);
       if(totalEl) grand += parseFloat(totalEl.textContent) || 0;
     });
-    document.getElementById('grandTotal').textContent = grand.toFixed(2);
+    document.getElementById('grandTotal').textContent = Math.round(grand);
     const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
-    document.getElementById('remainAmount').textContent = (grand - paid).toFixed(2);
+    document.getElementById('remainAmount').textContent = Math.round(grand - paid);
     return grand;
   }
 
@@ -563,7 +563,7 @@
         <td>${r.invoiceDate || '-'}</td>
         <td>${r.customerName || '-'}</td>
         <td>${(r.items || []).length}</td>
-        <td class="num">${(r.grandTotal || 0).toFixed(2)}</td>
+        <td class="num">${Math.round(r.grandTotal || 0)}</td>
         <td>
           <button class="mini-btn mini-open" onclick="openReceipt('${r.id}')">📂 فتح</button>
           <button class="mini-btn mini-print" onclick="printSaved('${r.id}')">🖨️ طباعة</button>
@@ -640,12 +640,12 @@
     (data.items || []).forEach((it, i)=>{
       body.innerHTML += `<tr>
         <td>${i+1}</td><td>${it.name}</td><td>${it.qty}</td>
-        <td>${Number(it.price).toFixed(2)}</td><td>${Number(it.total).toFixed(2)}</td>
+        <td>${Math.round(it.price)}</td><td>${Math.round(it.total)}</td>
       </tr>`;
     });
-    document.getElementById('pPaid').textContent = Number(data.paidAmount || 0).toFixed(2);
-    document.getElementById('pRemain').textContent = Number(data.remainAmount || (data.grandTotal - (data.paidAmount||0))).toFixed(2);
-    document.getElementById('pGrand').textContent = Number(data.grandTotal || 0).toFixed(2);
+    document.getElementById('pPaid').textContent = Math.round(data.paidAmount || 0);
+    document.getElementById('pRemain').textContent = Math.round(data.remainAmount || (data.grandTotal - (data.paidAmount||0)));
+    document.getElementById('pGrand').textContent = Math.round(data.grandTotal || 0);
   }
 
   function printCurrentForm(){
